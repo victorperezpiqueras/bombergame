@@ -1,0 +1,19 @@
+{
+  "name": "bombergame",
+  "version": "1.0.0",
+  "description": "Juego basado en bombergame",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorperezpiqueras/bombergame.git"
+  },
+  "author": "victorperezpiqueras",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/victorperezpiqueras/bombergame/issues"
+  },
+  "homepage": "https://github.com/victorperezpiqueras/bombergame#readme"
+}
