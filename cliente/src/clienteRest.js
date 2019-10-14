@@ -3,7 +3,7 @@ function ClienteRest() {
     this.agregarUsuario = function (nick) {
         $.getJSON("/agregarUsuario/" + nick, function (usuario) {
             console.log(usuario);
-            //agregarUsuario(data);
+            mostrarUsuario(usuario);
         });
     }
 
