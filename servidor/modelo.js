@@ -23,9 +23,12 @@ function Juego() {
 
         if (!this.usuarios[nombre]) {
             this.usuarios[nombre] = new Usuario(nombre);
-            console.log("Nuevo usuario: " + nombre);
+            console.log("Nuevo usuario: " + nombre);    
+            callback(this.usuarios[nombre]);
         }
-        callback(this.usuarios[nombre]);
+        else {
+            callback({nick:''});
+        }
     }
 
     this.obtenerPartidas = function (callback) {

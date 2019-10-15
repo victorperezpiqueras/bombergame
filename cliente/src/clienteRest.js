@@ -3,7 +3,12 @@ function ClienteRest() {
     this.agregarUsuario = function (nick) {
         $.getJSON("/agregarUsuario/" + nick, function (usuario) {
             console.log(usuario);
-            mostrarUsuario(usuario);
+            if(usuario.nick!=""){
+                mostrarUsuario(usuario);
+            }
+            else {
+                mostrarErrorUsuario();
+            }
         });
     }
 
@@ -16,6 +21,7 @@ function ClienteRest() {
     this.obtenerPartidas = function () {
         $.getJSON("/obtenerPartidas/", function (partidas) {
             console.log(partidas);
+            mostrarObtenerPartidas(partidas);
         });
     }
 
