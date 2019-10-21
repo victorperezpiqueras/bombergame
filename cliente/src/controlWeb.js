@@ -107,7 +107,7 @@ function mostrarObtenerPartidas(partidas) {
         cadena = cadena + '<td scope="row">' + partidas[index].nombre + '</td>';
         cadena = cadena + '<td>' + Object.keys(partidas[index].jugadores).length + '</td>';
         cadena = cadena + '<td>';
-        cadena = cadena + '<button type="button" id="unirsePartidaBtn" class="btn btn-primary btn-md" onclick="unirseAPartida(' + partidas[index] + ')">Unirse</button>';
+        cadena = cadena + '<button type="button" id="unirsePartidaBtn" class="btn btn-primary btn-md" onclick="rest.unirAPartida(\''+partidas[index].idp+'\',\''+this.usuario.nick+'\')">Unirse</button>';
         cadena = cadena + '</td>';
         cadena = cadena + '</tr>';
     }
@@ -116,8 +116,4 @@ function mostrarObtenerPartidas(partidas) {
     cadena = cadena + '</table>';
     cadena = cadena + '</div>';
     $('#unirseAPartida').append(cadena);
-}
-function unirseAPartida(partida) {
-    console.log("unirse");
-    rest.unirAPartida(partida.nombre, this.usuario.nick);
 }
