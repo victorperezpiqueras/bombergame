@@ -3,8 +3,9 @@ function ClienteRest() {
     this.agregarUsuario = function (nick) {
         $.getJSON("/agregarUsuario/" + nick, function (usuario) {
             console.log(usuario);
-            if(usuario.nick!=""){
+            if (usuario.nick != "") {
                 mostrarUsuario(usuario);
+                
             }
             else {
                 mostrarErrorUsuario();

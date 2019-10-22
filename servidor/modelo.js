@@ -60,10 +60,10 @@ function Juego() {
         callback(this.partidas[idp]);
     }
 
-    this.salir = function (nombrePartida, nick) {
-        this.partidas[nombrePartida].salir(nick);
-        if (this.comprobarJugadores(nombrePartida) == 0) {
-            this.eliminarPartida(nombrePartida);
+    this.salir = function (idp, nick) {
+        this.partidas[idp].salir(nick);
+        if (this.comprobarJugadores(idp) == 0) {
+            this.eliminarPartida(idp);
         }
     }
 
