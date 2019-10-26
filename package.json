@@ -1,21 +1,21 @@
 {
   "name": "bombergame",
   "version": "1.0.0",
-  "description": "Juego basado en bombergame",
+  "description": "Juego multijugador basado en bomberman",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node servidor"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/victorperezpiqueras/bombergame.git"
+    "url": "git+https://github.com/jgallud/bombergame.git"
   },
-  "author": "victorperezpiqueras",
+  "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/victorperezpiqueras/bombergame/issues"
+    "url": "https://github.com/jgallud/bombergame/issues"
   },
-  "homepage": "https://github.com/victorperezpiqueras/bombergame#readme",
+  "homepage": "https://github.com/jgallud/bombergame#readme",
   "dependencies": {
     "express": "^4.17.1",
     "jasmine-node": "^3.0.0",

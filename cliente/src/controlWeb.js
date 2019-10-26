@@ -1,168 +1,111 @@
-var usuario;
-function mostrarAgregarUsuario() {
-    var cadena = '<div id="mAU">';
-    cadena = cadena + '<h3>Usuario</h3>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre usuario">';
-    cadena = cadena + '<br>';
-    cadena = cadena + '<button type="button" id="inicioBtn" class="btn btn-primary btn-md">Entrar</button>';
-    cadena = cadena + '</div>';
 
-    //#id, .clase, htmltype
-    $('#inicio').append(cadena);
-    $('#inicioBtn').on('click', function () {
-        var nombre = $('#nombre').val();
-        if (nombre == "") {
-            nombre = "player";
+var nick;
+function mostrarAgregarUsuario(){
+	var cadena="<div id='mAU'>";
+	cadena=cadena+"<h3>Usuario</h3>";
+	cadena=cadena+'<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre usuario">';		
+	cadena=cadena+'<button type="button" id="inicioBtn" class="btn btn-primary btn-md">Iniciar Usuario</button>';	
+	cadena=cadena+"</div>";
+
+	$('#inicio').append(cadena);
+	$('#inicioBtn').on('click',function(){
+        var nombre=$('#nombre').val();
+        if (nombre==""){
+        	nombre="Neutro";
         }
         rest.agregarUsuario(nombre);
-
-    });
-
+     });
 }
 
-function mostrarPartida(partida) {
-    $('#bienvenido').remove();
-    $('#listaPartidas').remove();
-    cadena = '<div id="bienvenido">';
-    cadena = cadena + '<h4>Bienvenido a la partida ' + partida.nombre + '!</h4>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '</div>';
-    $('#welcome').append(cadena);
+function mostrarUsuario(data){
+	$('#mAU').remove();
+	ws=new ClienteWS(data.nick);
+	ws.ini();
+	nick=data.nick;
+	mostrarCrearPartida(data.nick);
 }
 
-function mostrarUsuario(usuario) {
-    var cadena;
-    this.usuario = usuario;
-    cadena = '<div id="bienvenido">';
-    cadena = cadena + '<h4>Bienvenido ' + usuario.nick + '!</h4>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '</div>';
-    $('#welcome').append(cadena);
-    $('#mAU').remove();
-    ws = new ClienteWS(usuario.nick);
-    ws.ini();
-    mostrarCrearPartida(usuario);
-    mostrarListaPartidas();
-    //rest.obtenerPartidas();////////////////////
+function mostrarAviso(msg){
+	alert(msg);
+	$('#nombre').val("Usa otro nick");
 }
 
+function mostrarCrearPartida(nick){
+	$('#mLP').remove();
+	$('#mP').remove();
+	var cadena="<div id='mCP'>";
+	cadena=cadena+"<h3>Bienvenido "+nick+"</h3>";
+	cadena=cadena+"<div class='row'><div class='col-sm-8'>";
+	cadena=cadena+"<h3>Crear Partida</h3>";
+	cadena=cadena+'<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida">';		
+	cadena=cadena+'<button type="button" id="crearPartidaBtn" class="btn btn-primary btn-md">Crear partida</button>';	
+	cadena=cadena+"</div><div class='col-sm-4'><h3>Unirse</h3>";
+	cadena=cadena+'<button type="button" id="unirseAPartidaBtn" class="btn btn-primary btn-md">Unirse a partida</button>';
+	cadena=cadena+"</div>";
 
-function mostrarErrorUsuario() {
-    $('#userExists').remove();
-    console.log("usuario ya existe");
-    cadena = '<div id="userExists">';
-    cadena = cadena + '<h6 style="color:red;">El usuario ya existe</h6>';
-    cadena = cadena + '</div>';
-    $('#mAU').append(cadena);
-    $('#nombre').val("");
-    //alert("aaaa");
-}
-
-function mostrarCrearPartida(usuario) {
-    var cadena = '<div id="mostrarCrearPartida" class="col-sm">';
-    cadena = cadena + '<h4>Crear Partida</h4>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre partida">';
-    cadena = cadena + '<br>';
-    cadena = cadena + '<button type="button" id="crearPartidaBtn" class="btn btn-danger btn-md" >Crear partida</button>';
-    cadena = cadena + '</div>';
-    $('#inicio').append(cadena);
-    $('#crearPartidaBtn').on('click', function () {
-        var nombre = $('#nombre').val();
-        if (nombre == "") {
-            nombre = "partida";
+	$('#inicio').append(cadena);
+	$('#crearPartidaBtn').on('click',function(){
+        var nombre=$('#nombrePartida').val();
+        if (nombre==""){
+        	nombre="SinNombre";
         }
-        //rest.crearPartida(nombre, usuario.nick);
+        //rest.crearPartida(nombre,nick);
         ws.crearPartida(nombre);
-    });
+     });
+	$('#unirseAPartidaBtn').on('click',function(){
+        //rest.obtenerPartidas();
+        ws.obtenerPartidas();
+     });
 
 }
 
-
-
-function mostrarListaPartidas() {
-    $('#listaJugadores').remove();
-    var cadena = '<div id="unirseAPartida" class="col-sm">';
-    cadena = cadena + '<h4>Unirse a Partida</h4>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '<button type="button" id="verPartidas" class="btn btn-primary btn-md" >Ver partidas</button>';
-    cadena = cadena + '<hr>';
-    cadena = cadena + '</div>';
-    $('#inicio').append(cadena);
-    $('#verPartidas').on('click', function () {
-        mostrarUnirseAPartida();
-    });
+function mostrarPartida(data){
+	$('#mCP').remove();
+	$('#mLP').remove();
+	var cadena="<div id='mP'>";
+	cadena=cadena+"<h3>Bienvenido a la partida: "+data.nombre+"</h3>";
+	cadena=cadena+'<p><button type="button" id="salirBtn" class="btn btn-primary btn-md" onclick="ws.salir()"">Salir</button></p></div>';
+	$('#inicio').append(cadena);
 }
 
-function mostrarUnirseAPartida() {
-    //$('#mostrarCrearPartida').remove();
-    rest.obtenerPartidas();////////////////////
+function mostrarListaPartidas(data){
+	$('#mCP').remove();
+	var numeroPartidas=Object.keys(data).length;
+	var cadena="<div id='mLP'>";
+	cadena=cadena+"<h3>Lista de partidas</h3>";
+	//cadena=cadena+'<ul class="list-group">';
+  	cadena=cadena+'<table class="table"><thead><tr>';
+    cadena=cadena+'<th scope="col">Nombre</th><th scope="col">Número jugadores</th><th>Unirse</th>';
+    cadena=cadena+'</tr></thead>';
+    cadena=cadena+'<tbody>';
+  	for(var key in data){
+  		cadena=cadena+'<tr>'
+  		cadena=cadena+'<td>'+data[key].nombre+'</td>';
+  		cadena=cadena+'<td>'+Object.keys(data[key].jugadores).length+'</td>';
+ 		cadena=cadena+'<td><button type="button" id="unirmeAPartidaBtn" class="btn btn-primary btn-md" onclick="ws.unirAPartida(\''+data[key].idp+'\',\''+nick+'\')">Unirse a partida</button></td>';
+ 		cadena=cadena+'</tr>';
+  	};
+  	cadena=cadena+"</tbody></table></div>";
+  	$('#inicio').append(cadena);
 }
 
-
-function mostrarObtenerPartidas(partidas) {
-    //$('#verPartidas').remove();
-    $('#listaPartidas').remove();
-    var cadena = '<div id="listaPartidas" class="col-sm">';
-
-    cadena = cadena + '<h4>Lista de Partidas</h4>';
-    cadena = cadena + '<table class="table">';
-    cadena = cadena + '<thead>';
-    cadena = cadena + '<tr>';
-    cadena = cadena + '<th scope="col">Nombre</th>';
-    cadena = cadena + '<th scope="col">Jugadores</th>';
-    cadena = cadena + '<th scope="col">Unirse</th>';
-    cadena = cadena + '</tr>';
-    cadena = cadena + '</thead>';
-    cadena = cadena + '<tbody>';
-    for (var index in partidas) {
-        cadena = cadena + '<tr>';
-        cadena = cadena + '<td scope="row">' + partidas[index].nombre + '</td>';
-        cadena = cadena + '<td>' + Object.keys(partidas[index].jugadores).length + '</td>';
-        cadena = cadena + '<td>';
-        //cadena = cadena + '<button type="button" id="unirsePartidaBtn" class="btn btn-primary btn-md" onclick="rest.unirAPartida(\''+partidas[index].idp+'\',\''+this.usuario.nick+'\')">Unirse</button>';
-        cadena = cadena + '<button type="button" id="unirsePartidaBtn" class="btn btn-primary btn-md" onclick="ws.unirAPartida(\'' + partidas[index].idp + '\',\'' + this.usuario.nick + '\')">Unirse</button>';
-        cadena = cadena + '</td>';
-        cadena = cadena + '</tr>';
-    }
-
-    cadena = cadena + '</tbody>';
-    cadena = cadena + '</table>';
-    cadena = cadena + '</div>';
-    $('#unirseAPartida').append(cadena);
+function mostrarListaJugadores(jugadores){
+	//$('#mCP').remove();
+	$('#mLJ').remove();
+	//var numeroPartidas=Object.keys(data).length;
+	var cadena="<div id='mLJ'>";
+	cadena=cadena+"<h3>Lista de jugadores</h3>";
+  	cadena=cadena+'<table class="table"><thead><tr>';
+    cadena=cadena+'<th scope="col">Nick</th><th scope="col">Vidas</th><th>Otros</th>';
+    cadena=cadena+'</tr></thead>';
+    cadena=cadena+'<tbody>';
+  	for(var key in jugadores){
+  		cadena=cadena+'<tr>'
+  		cadena=cadena+'<td>'+jugadores[key].nick+'</td>';
+  		cadena=cadena+'<td>-</td>';
+ 		cadena=cadena+'<td>Preparado</td>';
+ 		cadena=cadena+'</tr>';
+  	};
+  	cadena=cadena+"</tbody></table></div>";
+  	$('#mP').append(cadena);
 }
-
-
-function mostrarListaJugadores(jugadores) {
-    $('#mostrarCrearPartida').remove();
-    $('#unirseAPartida').remove();
-    $('#listaPartidas').remove();
-    $('#listaJugadores').remove();
-    var cadena = '<div id="listaJugadores" class="col-sm">';
-
-    cadena = cadena + '<h4>Lista de Jugadores</h4>';
-    cadena = cadena + '<table class="table">';
-    cadena = cadena + '<thead>';
-    cadena = cadena + '<tr>';
-    cadena = cadena + '<th>Nick</th>';
-    cadena = cadena + '<th>Vidas</th>';
-    cadena = cadena + '<th>Listo</th>';
-    cadena = cadena + '</tr>';
-    cadena = cadena + '</thead>';
-    cadena = cadena + '<tbody>';
-    for (var index in jugadores) {
-        cadena = cadena + '<tr>';
-        cadena = cadena + '<td>' + jugadores[index].nick + '</td>';
-        cadena = cadena + '<td></td>';
-        cadena = cadena + '<td>Preparado</td>';
-        cadena = cadena + '</tr>';
-    }
-
-    cadena = cadena + '</tbody>';
-    cadena = cadena + '</table>';
-    cadena = cadena + '<button type="button" id="salirPartidaBtn" class="btn btn-primary btn-md" onclick="ws.salirPartida()">Salir</button>';
-    cadena = cadena + '</div>';
-    $('#inicio').append(cadena);
-}
-

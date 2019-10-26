@@ -1,74 +1,70 @@
-var modelo = require("./modelo.js");
+var modelo=require("./modelo.js");
 
-describe("Bombergame", function () {
-    var juego;
-    var inicial;
+describe("Bombergame", function() {
+  var juego;
 
-    beforeEach(function () {
-        juego = new modelo.Juego();
-        //Inicial = new modelo.Inicial();
-    });
+  beforeEach(function() {
+    juego=new modelo.Juego();
+  });
 
-    it("comprobaciones iniciales", function () {
-        expect(Object.keys(juego.usuarios).length).toEqual(0);
-        expect(Object.keys(juego.partidas).length).toEqual(0);
+  it("comprobaciones iniciales", function() {
+    expect(Object.keys(juego.usuarios).length).toEqual(0);
+    expect(Object.keys(juego.partidas).length).toEqual(0);
+  });
 
-    });
+  it("comprobar agregar usuario",function(){
+    juego.agregarUsuario('pepe',function(usr){
+      expect(Object.keys(juego.usuarios).length).toEqual(1);
+      expect(juego.usuarios["pepe"]).not.toBe(undefined);
+      expect(juego.usuarios["pepe"].nick).toBe("pepe");
+      });
+  });
 
-    it("agregar usuarios al juego", function () {
-        juego.agregarUsuario("pepe", function(){});
-        expect(Object.keys(juego.usuarios).length).toEqual(1);
-        juego.agregarUsuario("pepa", function(){});
-        expect(Object.keys(juego.usuarios).length).toEqual(2);
+  it("comprobar usuario pepe crea partida una",function(){
+    juego.agregarUsuario("pepe",function(){});
+    juego.crearPartida("una","pepe",function(){});
+    expect(Object.keys(juego.partidas).length).toEqual(1);
+    expect(juego.partidas["unapepe"]).not.toBe(undefined);
+    expect(juego.partidas["unapepe"].jugadores["pepe"]).not.toBe(undefined);
+    expect(juego.partidas["unapepe"].idp).toBe("unapepe");
+  });
 
-        expect(Object.keys(juego.usuarios["pepe"])).not.toBe(undefined);
-        //expect(Object.keys(juego.usuarios["pepe"]).nick ).toBe("pepe");
-    });
+  it("comprobar usuario ana se une a partida unapepe",function(){
+    juego.agregarUsuario("pepe",function(){});
+    juego.crearPartida("una","pepe",function(){});
+    juego.agregarUsuario("ana",function(){});
+    expect(Object.keys(juego.usuarios).length).toEqual(2);
+    juego.unirAPartida("unapepe","ana");
+    expect(Object.keys(juego.partidas).length).toEqual(1);
+    expect(Object.keys(juego.partidas["unapepe"].jugadores).length).toEqual(2);
+    expect(juego.partidas["unapepe"].jugadores["ana"]).not.toBe(undefined);
+  });
 
-    it("comprobar partida", function () {
-        juego.agregarUsuario('pepe', function(){});
-        juego.crearPartida('partida', 'pepe', function(usr){});
-        expect(Object.keys(juego.partidas).length).toEqual(1);
-        expect(juego.partidas['partidapepe']).not.toBe(undefined);
-        expect(juego.usuarios['pepe'].nick).toEqual("pepe");
-    });
+it("comprobar usuario pepe sale de partida unapepe (dos jugadores)",function(){
+    juego.agregarUsuario("pepe",function(){});
+    juego.crearPartida("una","pepe",function(){});
+    var partida=juego.partidas["unapepe"];
+    expect(Object.keys(juego.partidas).length).toEqual(1);
+    expect(partida).not.toBe(undefined);
+    expect(partida.jugadores["pepe"]).not.toBe(undefined);
+    expect(partida.idp).toBe("unapepe");
+    juego.agregarUsuario("ana",function(){});
+    juego.unirAPartida("unapepe","ana");
+    juego.salir("unapepe","pepe");
+    expect(partida.jugadores["pepe"]).toBe(undefined);
+    expect(Object.keys(partida.jugadores).length).toBe(1);
+  });
 
-    it("unirse a partida agrega jugadores", function () {
-        juego.agregarUsuario('pepe', function(){});
-        juego.agregarUsuario('pepa', function(){});
-        juego.crearPartida('partida', 'pepe', function(){});
-        juego.unirAPartida('partidapepe', 'pepa', function(){});
-        expect(Object.keys(juego.partidas['partidapepe'].jugadores).length).toEqual(2);
-        expect(juego.partidas['partidapepe'].jugadores['pepa'].nick).toBe("pepa");
-    });
-
-    it("partida en fase inicial", function () {
-        juego.agregarUsuario('pepe', function(){});
-        juego.crearPartida('partida', 'pepe', function(){});
-        expect(juego.partidas['partidapepe'].fase.nombre).toEqual("inicial");
-        //probar a comprobar la clase del objeto fase
-        //expect(juego.partidas['partidapepe'].fase instanceof Inicial).toBeTruthy();
-    });
-
-    it("salir de partida de 2 jugadores quita el jugador", function () {
-        juego.agregarUsuario('pepe', function(){});
-        juego.agregarUsuario('pepa', function(){});
-        juego.crearPartida('partida', 'pepe', function(){});
-        juego.unirAPartida('partidapepe', 'pepa', function(){});
-        expect(Object.keys(juego.partidas['partidapepe'].jugadores).length).toEqual(2);
-        juego.salir('partidapepe', 'pepa');
-        expect(Object.keys(juego.partidas['partidapepe'].jugadores).length).toEqual(1);
-    });
-
-    it("salir de partida de 1 jugador quita el jugador y borra la partida", function () {
-        juego.agregarUsuario('pepe', function(){});
-        juego.crearPartida('partida', 'pepe', function(){});
-        expect(Object.keys(juego.partidas).length).toEqual(1);
-        expect(Object.keys(juego.partidas['partidapepe'].jugadores).length).toEqual(1);
-        juego.salir('partidapepe', 'pepe');
-        expect(Object.keys(juego.partidas).length).toEqual(0);
-    });
-
+it("comprobar usuario pepe sale de partida unapepe y se elimina",function(){
+    juego.agregarUsuario("pepe",function(){});
+    juego.crearPartida("una","pepe",function(){});
+    expect(Object.keys(juego.partidas).length).toEqual(1);
+    expect(juego.partidas["unapepe"]).not.toBe(undefined);
+    expect(juego.partidas["unapepe"].jugadores["pepe"]).not.toBe(undefined);
+    expect(juego.partidas["unapepe"].idp).toBe("unapepe");
+    juego.salir("unapepe","pepe");
+    expect(juego.partidas["unapepe"]).toBe(undefined);
+  });
 
 
 });
