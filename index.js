@@ -46,7 +46,7 @@ app.get("/obtenerUsuarios", function (request, response) {
 	})
 });
 
-app.get("/comprobarUsuario:nick", function (request, response) {
+app.get("/comprobarUsuario/:nick", function (request, response) {
 	var nick = request.params.nick;
 	juego.obtenerUsuario(nick, function (usuario) {
 		response.send(usuario);
