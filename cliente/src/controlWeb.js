@@ -1,17 +1,19 @@
 
 var nick;
 
-function comprobarUsuario(){
-	if($.cookie("usr")){
+function comprobarUsuario() {
+	if ($.cookie("usr")) {
 		rest.comprobarUsuario();
 	}
 	else {
 		mostrarAgregarUsuario();
-/* 		mostrarUsuario(usr); */
+		/* 		mostrarUsuario(usr); */
 	}
 }
 
 function mostrarAgregarUsuario() {
+	$('#mAU').remove();
+	$('#mCP').remove();
 	var cadena = "<div id='mAU'>";
 	cadena = cadena + "<h3>Usuario</h3>";
 	cadena = cadena + '<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre usuario">';
@@ -42,10 +44,13 @@ function mostrarAviso(msg) {
 }
 
 function mostrarCrearPartida(nick) {
+	$('#mCP').remove();
 	$('#mLP').remove();
 	$('#mP').remove();
 	var cadena = "<div id='mCP'>";
 	cadena = cadena + "<h3>Bienvenido " + nick + "</h3>";
+	cadena = cadena + '<button type="button" id="cerrarSesionBtn" class="btn btn-danger btn-md">Cerrar Sesión</button>';
+	cadena = cadena + '<hr>';
 	cadena = cadena + "<div class='row'><div class='col-sm-8'>";
 	cadena = cadena + "<h3>Crear Partida</h3>";
 	cadena = cadena + '<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida">';
@@ -66,6 +71,9 @@ function mostrarCrearPartida(nick) {
 	$('#unirseAPartidaBtn').on('click', function () {
 		//rest.obtenerPartidas();
 		ws.obtenerPartidas();
+	});
+	$('#cerrarSesionBtn').on('click', function () {
+		rest.cerrarSesion();
 	});
 
 }
@@ -91,7 +99,7 @@ function mostrarListaPartidas(data) {
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
 	for (var key in data) {
-		if(data[key].fase.nombre=="inicial"){/////////////////////////////////////////cambiar a modelo
+		if (data[key].fase.nombre == "inicial") {/////////////////////////////////////////cambiar a modelo
 			cadena = cadena + '<tr>'
 			cadena = cadena + '<td>' + data[key].nombre + '</td>';
 			cadena = cadena + '<td>' + Object.keys(data[key].jugadores).length + '</td>';
@@ -123,4 +131,16 @@ function mostrarListaJugadores(jugadores) {
 	};
 	cadena = cadena + "</tbody></table></div>";
 	$('#mP').append(cadena);
+}
+
+function mostrarCanvas() {
+	$('#mLJ').remove();
+	var game = new Phaser.Game(240, 240, Phaser.CANVAS, "canvas");
+	game.state.add("BootState", new Bomberman.BootState());
+	game.state.add("LoadingState", new Bomberman.LoadingState());
+	game.state.add("TiledState", new Bomberman.TiledState());
+	game.state.start("BootState", true, false, "assets/levels/level1.json", "TiledState");
+}
+function borrarCanvas(){
+	$('#canvas').remove();
 }

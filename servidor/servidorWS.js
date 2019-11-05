@@ -40,11 +40,15 @@ function ServidorWS() {
             socket.on("preparado", function (idp, nick) {
                 //var partida = juego.partidas[idp];
                 //partida.jugadorPreparado(nick);
-                juego.jugadorPreparado(idp, nick, function (jugadores) {
-                    cli.enviarATodos(io, idp, "jugadorPreparado", jugadores);
+                juego.jugadorPreparado(idp, nick, function (partida) {
+                    cli.enviarATodos(io, idp, "jugadorPreparado", partida.jugadores);
+                    if (partida.fase.nombre == "jugando") {
+                        cli.enviarATodos(io, idp, "jugar", partida);
+                    }
                 });
-               // cli.enviarRemitente(socket, "jugadorPreparado", partida);
-               // cli.enviarATodosMenosRemitente(socket, idp, "jugadorPreparado", partida);
+
+                // cli.enviarRemitente(socket, "jugadorPreparado", partida);
+                // cli.enviarATodosMenosRemitente(socket, idp, "jugadorPreparado", partida);
             });
         });
     }

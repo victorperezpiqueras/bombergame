@@ -1,0 +1,21 @@
+{
+    "assets": {
+        "map_tiles": {"type": "image", "source": "assets/images/bomberman_spritesheet.png"},
+        "player_spritesheet": {"type": "spritesheet", "source": "assets/images/player_spritesheet.png", "frame_width": 16, "frame_height": 16},
+        "bomb_spritesheet": {"type": "spritesheet", "source": "assets/images/bomb_spritesheet.png", "frame_width": 16, "frame_height": 16},
+        "enemy_spritesheet": {"type": "spritesheet", "source": "assets/images/enemy_spritesheet.png", "frame_width": 16, "frame_height": 16},
+        "explosion_image": {"type": "image", "source": "assets/images/explosion.png"},
+        
+        "level_tilemap": {"type": "tilemap", "source": "assets/maps/level1_map.json"}
+    },
+    "groups": [
+        "explosions",
+        "bombs",
+        "enemies",
+        "players"
+    ],
+    "map": {
+        "key": "level_tilemap",
+        "tilesets": ["map_tiles"]
+    }
+}

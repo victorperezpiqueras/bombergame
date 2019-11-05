@@ -65,6 +65,13 @@ function Juego() {
 		}
 		return this.partidas[idp];
 	}
+	this.quitarUsuario = function (nick, callback) {
+		var user = this.usuarios[nick];
+		if (user) {
+			delete this.usuarios[nick];
+			callback(user);
+		}
+	}
 	this.comprobarJugadores = function (nombrePartida) {
 		return Object.keys(this.partidas[nombrePartida].jugadores).length;
 	}
@@ -80,8 +87,8 @@ function Juego() {
 	}
 	this.jugadorPreparado = function (idp, nick, callback) {
 		if (this.partidas[idp]) {
-			jugadores = this.partidas[idp].jugadorPreparado(nick);
-			callback(jugadores);
+			this.partidas[idp].jugadorPreparado(nick);
+			callback(this.partidas[idp]);
 		}
 	}
 }
@@ -109,7 +116,8 @@ function Partida(nombre, idp) {
 		this.fase.jugadorPreparado(nick, this);
 		//	this.jugadores[nick].preparado = "Preparado";
 		//	this.comprobarTodosPreparados();
-		return this.jugadores;
+		//return this.jugadores;
+		return this;
 	};
 	this.comprobarTodosPreparados = function () {
 		var preparados = 0;

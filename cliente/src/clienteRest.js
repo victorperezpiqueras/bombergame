@@ -12,6 +12,19 @@ function ClienteRest() {
 			}
 		});
 	}
+	this.cerrarSesion = function () {
+		var usr = JSON.parse($.cookie("usr"));
+		$.getJSON("/cerrarSesion/" + usr.nick, function (data) {
+			console.log(data);
+			if (data.nick != "") {
+				$.removeCookie('usr', { path: '/' });
+				mostrarAgregarUsuario();
+			}
+			else {
+				mostrarAviso("No se pudo borrar el usuario");
+			}
+		});
+	}
 	this.comprobarUsuario = function () {
 		var usr = JSON.parse($.cookie("usr"));
 		$.getJSON("/comprobarUsuario/" + usr.nick, function (data) {
