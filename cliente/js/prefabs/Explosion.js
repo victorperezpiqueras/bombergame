@@ -25,4 +25,6 @@ Bomberman.Explosion.prototype.reset = function (position_x, position_y) {
     Phaser.Sprite.prototype.reset.call(this, position_x, position_y);
     // add another kill event
     this.kill_timer.add(Phaser.Timer.SECOND * this.duration, this.kill, this);
+    /* var audio = new Audio('../../assets/audio/Minecraft TNT Sound FX 4.2s - 6.2s (0rRlpg9iSZM) (online-audio-converter.com).mp3');
+    audio.play(); */
 };

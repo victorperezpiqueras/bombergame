@@ -26,6 +26,8 @@ Bomberman.Bomb.prototype.reset = function (position_x, position_y) {
 };
 
 Bomberman.Bomb.prototype.kill = function () {
+    /* var audio = new Audio('../../assets/audio/Minecraft TNT Sound FX 4.2s - 6.2s (0rRlpg9iSZM) (online-audio-converter.com).mp3');
+    audio.play(); */
     "use strict";
     Phaser.Sprite.prototype.kill.call(this);
     var explosion_name, explosion_position, explosion_properties, explosion;
@@ -41,6 +43,9 @@ Bomberman.Bomb.prototype.kill = function () {
     this.create_explosions(1, this.bomb_radius, +1, "x");
     this.create_explosions(-1, -this.bomb_radius, -1, "y");
     this.create_explosions(1, this.bomb_radius, +1, "y");
+
+
+    
 };
 
 Bomberman.Bomb.prototype.create_explosions = function (initial_index, final_index, step, axis) {

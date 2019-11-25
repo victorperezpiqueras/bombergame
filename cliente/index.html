@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <title>Bombergame</title>
   <meta charset="utf-8">
@@ -11,12 +10,9 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-  <!--   <script src="cliente/lib/jquery.cookie.js"></script> -->
   <script src="lib/phaser.js"></script>
-
   <script src="src/clienteRest.js"></script>
   <script src="src/clienteWS.js"></script>
-  <script src="src/controlWeb.js"></script>
   <script src="src/controlWeb.js"></script>
 
   <script src="js/Utils.js"></script>
@@ -29,28 +25,26 @@
   <script src="js/prefabs/Bomb.js"></script>
   <script src="js/prefabs/Explosion.js"></script>
   <script src="js/prefabs/Enemy.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
+  <script src="js/main.js"></script>
 
 </head>
-
 <body>
   <div class="jumbotron text-center">
     <h1>Bomber Game</h1>
-    <p>El juego del año 2019 en la ESII</p>
+    <p>El juego del año 2019 en la ESII</p> 
   </div>
   <div class="container">
     <div class="row">
-      <div class="col">
+       <div class="col">
         <div id="inicio"></div>
-        <div id="canvas"></div>
+        <div id="juego" class='col-sm-8'></div>
       </div>
     </div>
   </div>
   <script>
-    rest = new ClienteRest();
-    comprobarUsuario();
+      rest=new ClienteRest();
       //mostrarAgregarUsuario();
+      comprobarUsuario();
   </script>
 </body>
-
 </html>

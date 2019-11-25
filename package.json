@@ -4,6 +4,7 @@
   "description": "Juego multijugador basado en bomberman",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "./node_modules/.bin/jasmine-node servidor"
   },
   "repository": {
@@ -19,6 +20,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "jasmine-node": "^3.0.0",
+    "mongodb": "^3.3.4",
     "socket.io": "^2.3.0"
   }
 }

@@ -5,6 +5,7 @@ Bomberman.Enemy = function (game_state, name, position, properties) {
     Bomberman.Prefab.call(this, game_state, name, position, properties);
     
     this.anchor.setTo(0.5);
+    this.name=name;
     
     this.walking_speed = +properties.walking_speed;
     this.walking_distance = +properties.walking_distance;
@@ -78,3 +79,14 @@ Bomberman.Enemy.prototype.switch_direction = function () {
         this.body.velocity.y *= -1;
     }
 };
+
+Bomberman.Enemy.prototype.kill=function(){
+    if (this.game_state.enemigos[this.name]=="vivo"){
+        /* var audio = new Audio('../../assets/audio/eyeyee - Zombie Death Minecraft.mp3');
+        audio.play(); */
+        console.log("Muere enemigo");
+        this.game_state.enemigos[this.name]="muerto";
+        Phaser.Sprite.prototype.kill.call(this);
+        ws.muereEnemigo(this.name);
+    }
+}

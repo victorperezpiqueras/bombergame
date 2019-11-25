@@ -39,7 +39,8 @@
                      "frame":"65",
                      "group":"players",
                      "texture":"player_spritesheet",
-                     "walking_speed":"50"
+                     "walking_speed":"50",
+                     "vidas":3
                     },
                  "type":"player",
                  "visible":true,

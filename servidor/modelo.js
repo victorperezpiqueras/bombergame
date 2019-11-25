@@ -1,12 +1,15 @@
+var dao = require("./dao.js");
 
 function Juego() {
 	this.partidas = {};
 	this.usuarios = {};
+	this.dao = new dao.Dao();
 
 	this.crearPartida = function (nombre, nick, callback) {
 		var idp = nombre + nick;
 		var partida;
 		if (!this.partidas[idp]) {
+			console.log("Nueva partida");
 			partida = new Partida(nombre, idp);
 			partida.agregarJugador(this.usuarios[nick]);
 			//partida.jugadores[nick]=this.usuarios[nick];
@@ -27,10 +30,7 @@ function Juego() {
 			callback({ nick: "" });
 		}
 	}
-	this.obtenerUsuarios = function (callback) {
-		callback(this.usuarios);
-	}
-	this.obtenerUsuario = function (nick, callback) {////////////////////////////
+	this.obtenerUsuario = function (nick, callback) {
 		if (this.usuarios[nick]) {
 			callback(this.usuarios[nick]);
 		}
@@ -38,14 +38,17 @@ function Juego() {
 			callback({ nick: "" });
 		}
 	}
+	this.obtenerUsuarios = function (callback) {
+		callback(this.usuarios);
+	}
 	this.obtenerPartidas = function (callback) {
 		callback(this.partidas);
 	}
 	this.obtenerPartidasInicial = function (callback) {
-		var partidas = [];
-		for (var index in this.partidas) {
-			if (this.partidas[index].fase.nombre == "inicial") {
-				partidas.push(partidas[index]);
+		partidas = {};
+		for (var key in this.partidas) {
+			if (this.partidas[key].fase.nombre == "inicial") {
+				partidas[key] = this.partidas[key];
 			}
 		}
 		callback(partidas);
@@ -59,18 +62,13 @@ function Juego() {
 		return partida;
 	}
 	this.salir = function (idp, nick) {
-		this.partidas[idp].salir(nick);
-		if (this.comprobarJugadores(idp) == 0) {
-			this.eliminarPartida(idp);
+		if (this.partidas[idp]) {
+			this.partidas[idp].salir(nick);
+			if (this.comprobarJugadores(idp) == 0) {
+				this.eliminarPartida(idp);
+			}
 		}
 		return this.partidas[idp];
-	}
-	this.quitarUsuario = function (nick, callback) {
-		var user = this.usuarios[nick];
-		if (user) {
-			delete this.usuarios[nick];
-			callback(user);
-		}
 	}
 	this.comprobarJugadores = function (nombrePartida) {
 		return Object.keys(this.partidas[nombrePartida].jugadores).length;
@@ -86,91 +84,231 @@ function Juego() {
 		callback(jugadores);
 	}
 	this.jugadorPreparado = function (idp, nick, callback) {
+		//var jugadores=[];
 		if (this.partidas[idp]) {
 			this.partidas[idp].jugadorPreparado(nick);
-			callback(this.partidas[idp]);
+			this.partidas[idp].jugadores;
 		}
+		callback(this.partidas[idp]);
+	}
+	this.cerrarSesion = function (nick, callback) {
+		var data = { res: "nook" };
+		if (this.usuarios[nick]) {
+			delete this.usuarios[nick];
+			data = { res: "ok" };
+			console.log("Usuario " + nick + " cierra sesión");
+		}
+		callback(data);
+	}
+	this.enviarResultado = function (idp, nick, callback) {
+		if (this.partidas[idp]) {
+			this.partidas[idp].enviarResultado(nick);
+			//this.partidas[idp].jugadores;
+		}
+		callback(this.partidas[idp]);
+	}
+	this.muereEnemigo = function (idp, nick, enemy, callback) {
+		if (this.partidas[idp]) {
+			this.partidas[idp].muereEnemigo(nick, enemy);
+			//this.partidas[idp].jugadores;
+		}
+		callback(this.partidas[idp]);
+	}
+	this.jugadorHerido = function (idp, nick, callback) {
+		if (this.partidas[idp]) {
+			this.partidas[idp].jugadorHerido(nick);
+			//this.partidas[idp].jugadores;
+		}
+		callback(this.partidas[idp]);
+	}
+	this.obtenerResultados = function (callback) {
+		this.dao.obtenerResultados(callback);
+	}
+	this.obtenerResultadosNick = function (nick,callback) {
+		this.dao.obtenerResultadosCriterio({nickGanador:nick}, callback);
+	}
+	this.anotarResultado = function (partida, callback) {
+		var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores());
+		this.dao.insertarResultado(resultado, callback);
 	}
 }
 
 function Partida(nombre, idp) {
 	this.nombre = nombre;
+	this.nickGanador="los bichos";
+	this.nivel=1;
 	this.idp = idp;
 	this.jugadores = {};
+	this.enemigos = {};
+	this.numeroEnemigos = 4;
 	this.fase = new Inicial();
 	this.agregarJugador = function (usr) {
 		this.fase.agregarJugador(usr, this);
-	};
+	}
 	this.puedeAgregarJugador = function (usr) {
+		usr.ini();
 		this.jugadores[usr.nick] = usr;
-		this.jugadores[usr.nick].preparado = "No preparado";/////////////////////////////
-	};
+	}
 	this.obtenerJugadores = function () {
 		return this.jugadores;
-	};
+	}
 	this.salir = function (nick) {
 		delete this.jugadores[nick];
-		this.comprobarTodosPreparados();
-	};
+	}
 	this.jugadorPreparado = function (nick) {
 		this.fase.jugadorPreparado(nick, this);
-		//	this.jugadores[nick].preparado = "Preparado";
-		//	this.comprobarTodosPreparados();
-		//return this.jugadores;
-		return this;
-	};
-	this.comprobarTodosPreparados = function () {
-		var preparados = 0;
-		//var preparados = true;
-		for (var index in this.jugadores) {
-			if (this.jugadores[index].preparado == "Preparado") preparados++;
-			//if (this.jugadores[index].preparado == "No preparado") preparados=false;
+	}
+	this.todosPreparados = function () {
+		res = true;
+		for (var key in this.jugadores) {
+			if (this.jugadores[key].estado == "no preparado") {
+				res = false;
+			}
 		}
-		if (preparados == Object.keys(this.jugadores).length) {
-			console.log("Partida iniciada: " + this.nombre);
-			return true;
+		return res;
+	}
+	this.setTodosVivos = function () {
+		for (var key in this.jugadores) {
+			this.jugadores[key].estado = "vivo";
+
 		}
-		return false;
-		//return preparados;
+	}
+	this.todosMuertos = function () {
+		res = true;
+		for (var key in this.jugadores) {
+			if (this.jugadores[key].estado != "muerto") {
+				res = false;
+			}
+		}
+		return res;
+	}
+	this.enviarResultado = function (nick) {
+		this.fase.enviarResultado(nick, this);
+	}
+	this.comprobarJugadores = function () {
+		//console.log(jugadores);
+		for (var key in this.jugadores) {
+			if (this.jugadores[key].vidas <= 0) {
+				this.jugadores[key].estado = "muerto";
+				console.log("jugador muere");
+			}
+		}
+	}
+	this.comprobarGanador = function () {
+		ganador = { vidas: 0 };
+		for (var key in this.jugadores) {
+			if (this.jugadores[key].vidas > ganador.vidas) {
+				ganador = this.jugadores[key];
+				this.nickGanador=key;
+			}
+		}
+	}
+	this.muereEnemigo = function (nick, enemy) {
+		this.fase.muereEnemigo(nick, enemy, this);
+	}
+	this.jugadorHerido = function (nick) {
+		this.fase.jugadorHerido(nick, this);
+	}
+	this.obtenerNickJugadores = function () {
+		var nickJugadores = [];
+		for(var nick in this.jugadores){
+			nickJugadores.push(nick);
+		}
+		return nickJugadores;
 	}
 }
 
 function Inicial() {
 	this.nombre = "inicial";
-	this.agregarJugador = function (nick, partida) {
-		partida.puedeAgregarJugador(nick);
+	this.agregarJugador = function (usr, partida) {
+		partida.puedeAgregarJugador(usr);
 	}
 	this.jugadorPreparado = function (nick, partida) {
-		partida.jugadores[nick].preparado = "Preparado";
-		if (partida.comprobarTodosPreparados()) {
+		partida.jugadores[nick].estado = "preparado";
+		if (partida.todosPreparados()) {
 			partida.fase = new Jugando();
+			partida.setTodosVivos();
 		}
+	}
+	this.enviarResultado = function (nick, partida) {
+		console.log("La partida no se ha iniciado");
+	}
+	this.muereEnemigo = function (nick, partida) {
+		console.log("La partida no se ha iniciado");
+	}
+	this.jugadorHerido = function (nick, partida) {
+		console.log("La partida no se ha iniciado");
 	}
 }
 
 function Jugando() {
 	this.nombre = "jugando";
-	this.agregarJugador = function (nick, partida) {
+	this.agregarJugador = function (usr, partida) {
 		console.log("El juego ya ha comenzado");
 	}
 	this.jugadorPreparado = function (nick, partida) {
-		console.log("La partida ya ha comenzado");
+		console.log("la partida ya ha comenzado");
+	}
+	this.enviarResultado = function (nick, partida) {
+		partida.comprobarJugadores();
+		if (partida.todosMuertos()) {
+			partida.fase = new Final();
+		}
+		//comprobar que alguien haya ganado
+	}
+	this.muereEnemigo = function (nick, enemy, partida) {
+		//partida.numeroEnemigos=partida.numeroEnemigos-1;
+		partida.enemigos[enemy] = enemy;
+		console.log("muere enemigo");
+		if (Object.keys(partida.enemigos).length >= partida.numeroEnemigos) {
+			partida.comprobarGanador();
+			partida.fase = new Final();
+		}
+	}
+	this.jugadorHerido = function (nick, partida) {
+		if (partida.jugadores[nick].estado == "vivo") {
+			partida.jugadores[nick].vidas = partida.jugadores[nick].vidas - 1;
+			console.log("Jugador pierde 1 vida");
+			partida.comprobarJugadores();
+			if (partida.todosMuertos()) {
+				partida.fase = new Final();
+			}
+		}
 	}
 }
 
 function Final() {
 	this.nombre = "final";
-	this.agregarJugador = function (nick, partida) {
+	this.agregarJugador = function (usr, partida) {
 		console.log("El juego ya ha terminado");
 	}
-	this.jugadorPreparado = function (nick, partida) {
-		console.log("La partida ya ha acabado");
+	this.enviarResultado = function (nick, partida) {
+		console.log("La partida ha terminado");
+	}
+	this.muereEnemigo = function (nick, partida) {
+		console.log("La partida ha terminado");
+	}
+	this.jugadorHerido = function (nick, partida) {
+		console.log("La partida ha terminado");
 	}
 }
 
 function Usuario(nick) {
 	this.nick = nick;
-	this.preparado = "No preparado";//"Preparado"
+	this.estado = "no preparado";
+	this.vidas = 3;
+	this.ini = function () {
+		this.estado = "no preparado";
+		this.vidas = 3;
+	}
+}
+
+function Resultado(nickGanador, nombrePartida, nivel, jugadores) {
+	this.nickGanador = nickGanador;
+	this.nombrePartida = nombrePartida
+	this.nivel = nivel;
+	this.jugadores = jugadores;
+
 }
 
 module.exports.Juego = Juego;

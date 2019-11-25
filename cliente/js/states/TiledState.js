@@ -17,6 +17,9 @@ Bomberman.TiledState.prototype.init = function (level_data) {
     "use strict";
     var tileset_index;
     this.level_data = level_data;
+
+    this.enemigos={};
+    this.jugadores={};
     
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.scale.pageAlignHorizontally = true;
@@ -86,7 +89,25 @@ Bomberman.TiledState.prototype.create_object = function (object) {
         prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties);
     }
     this.prefabs[object.name] = prefab;
+
+    if (object.name.includes("enemy")){
+        this.enemigos[object.name]="vivo";
+    }
+    else{
+        this.jugadores[ws.nick]=object;
+    }
+
 };
+
+Bomberman.TiledState.prototype.todosEnemigosMuertos=function(){
+    res=true;
+    for (var key in this.enemigos){
+      if (this.enemigos[key]!="muerto"){
+        res=false;
+        }
+    }
+    return res;
+}
 
 Bomberman.TiledState.prototype.game_over = function () {
     "use strict";
