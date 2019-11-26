@@ -1,5 +1,5 @@
 var dao = require("./dao.js");
-
+var cifrado = require("./cifrado.js");
 function Juego() {
 	this.partidas = {};
 	this.usuarios = {};
@@ -39,7 +39,9 @@ function Juego() {
 		}
 	}
 	this.obtenerUsuarios = function (callback) {
-		callback(this.usuarios);
+		//callback(this.usuarios);
+		console.log("obtener usuarios")
+		this.dao.obtenerUsuarios(callback);
 	}
 	this.obtenerPartidas = function (callback) {
 		callback(this.partidas);
@@ -124,19 +126,49 @@ function Juego() {
 	this.obtenerResultados = function (callback) {
 		this.dao.obtenerResultados(callback);
 	}
-	this.obtenerResultadosNick = function (nick,callback) {
-		this.dao.obtenerResultadosCriterio({nickGanador:nick}, callback);
+	this.obtenerResultadosNick = function (nick, callback) {
+		this.dao.obtenerResultadosCriterio({ nickGanador: nick }, callback);
 	}
 	this.anotarResultado = function (partida, callback) {
 		var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores());
 		this.dao.insertarResultado(resultado, callback);
 	}
+	this.registrarUsuario = function (user, callback) {
+		var juego = this;
+		this.dao.obtenerUsuariosCriterio({ nick: user.nick, email: user.email }, function (usuarios) {
+			if (!usuarios) {
+				user.password = cifrado.encrypt(user.password);
+				console.log("Modelo-usuario:", user)
+				juego.dao.insertarUsuario(user, function (user) {
+					console.log("creado usuario")
+					callback({ "res": "ok" });
+				});
+			}
+			else {
+				callback({ "res": "no ok" });
+			}
+		});
+	}
+	this.loginUsuario = function (user, callback) {
+		var juego = this;
+		this.dao.obtenerUsuariosCriterio({ nick: user.nick, email: user.email }, function (usuario) {
+			if (usuario) {
+				var user = usuario;
+				user.password = cifrado.decrypt(user.password);
+				console.log("encontrado usuario")
+				callback(user);
+			}
+			else {
+				callback({ "res": "no ok" });
+			}
+		});
+	}
 }
 
 function Partida(nombre, idp) {
 	this.nombre = nombre;
-	this.nickGanador="los bichos";
-	this.nivel=1;
+	this.nickGanador = "los bichos";
+	this.nivel = 1;
 	this.idp = idp;
 	this.jugadores = {};
 	this.enemigos = {};
@@ -199,7 +231,7 @@ function Partida(nombre, idp) {
 		for (var key in this.jugadores) {
 			if (this.jugadores[key].vidas > ganador.vidas) {
 				ganador = this.jugadores[key];
-				this.nickGanador=key;
+				this.nickGanador = key;
 			}
 		}
 	}
@@ -211,7 +243,7 @@ function Partida(nombre, idp) {
 	}
 	this.obtenerNickJugadores = function () {
 		var nickJugadores = [];
-		for(var nick in this.jugadores){
+		for (var nick in this.jugadores) {
 			nickJugadores.push(nick);
 		}
 		return nickJugadores;

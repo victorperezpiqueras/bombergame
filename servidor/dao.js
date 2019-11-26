@@ -3,7 +3,9 @@ var ObjectID = require("mongodb").ObjectID;
 
 function Dao() {
     this.resultados = undefined;
+    this.usuarios = undefined;
 
+    /* RESULTADOS */
     this.insertarResultado = function (res, callback) {
         insertar(this.resultados, res, callback);
     };
@@ -14,6 +16,19 @@ function Dao() {
         obtener(this.resultados, criterio, callback);
     }
 
+    /* USUARIOS */
+    this.insertarUsuario = function (usr, callback) {
+        //console.log("Insertar usuario:", usr)
+        insertar(this.usuarios, usr, callback);
+    };
+    this.obtenerUsuarios = function (callback) {
+        obtenerTodos(this.usuarios, callback);
+    };
+    this.obtenerUsuariosCriterio = function (criterio, callback) {
+        obtener(this.usuarios, criterio, callback);
+    }
+
+    /* HELPERS */
     function insertar(coleccion, elemento, callback) {
         coleccion.insertOne(elemento, function (err, result) {
             if (err) {
@@ -41,10 +56,7 @@ function Dao() {
         });
     };
 
-
-
-
-
+    /* CONNECTION */
     this.connect = function () {
         var dao = this;
         mongo.connect("mongodb+srv://victorperezpiqueras:quieroquefuncione@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
@@ -63,10 +75,17 @@ function Dao() {
                             dao.resultados = col;
                         }
                     });
-
+                    database.db("bombergame").collection("usuarios", function (err, col) {
+                        if (err) {
+                            console.log("No pude obtener la coleccion")
+                        }
+                        else {
+                            console.log("Tenemos la colección usuarios");
+                            dao.usuarios = col;
+                        }
+                    });
                 }
             })
-        //mongodb+srv://victorperezpiqueras:<password>@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority
     }
     this.connect();
 
