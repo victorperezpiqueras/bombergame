@@ -55,7 +55,8 @@ function ClienteRest() {
 		$.getJSON("/cerrarSesion/" + usr.nick, function (data) {
 			console.log(data);
 			if (data.res != "ok") {
-				mostrarUsuario(data);
+				//mostrarUsuario(data);
+				mostrarLoginUsuario();
 			}
 			else {
 				$.removeCookie("usr");

@@ -14,7 +14,7 @@ function mostrarRegistrarUsuario() {
 	$('#mAU').remove();
 	$('#mLU').remove();
 	$('#mRU').remove();
-	var cadena = "<div id='mRU'>";
+/* 	var cadena = "<div id='mRU'>";
 	cadena = cadena + "<h3>Registrar</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
 	cadena = cadena + "<div class='form-group'>";
@@ -33,6 +33,9 @@ function mostrarRegistrarUsuario() {
 		var emailr = $('#emailr').val();
 		var password = $('#password').val();
 		rest.registrarUsuario(nick,email,emailr,password);
+	}); */
+	$(document).ready(function() {
+		$('#inicio').load('login/registro.html');
 	});
 }
 function mostrarLoginUsuario() {
@@ -41,7 +44,7 @@ function mostrarLoginUsuario() {
 	$('#mRU').remove();
 	$('#mCP').remove();
 	
-	var cadena = "<div id='mLU'>";
+	/* var cadena = "<div id='mLU'>";
 	cadena = cadena + "<h3>Login</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
 	cadena = cadena + "<div class='form-group'>";
@@ -56,7 +59,11 @@ function mostrarLoginUsuario() {
 		var nick = $('#nickLogin').val();
 		var password = $('#passwordLogin').val();		
 		rest.loginUsuario(nick,password);
+	}); */
+	$(document).ready(function() {
+		$('#inicio').load('login/login.html');
 	});
+	
 }
 
 function mostrarAgregarUsuario() {//deprecated
@@ -101,14 +108,16 @@ function mostrarCrearPartida(nick) {
 	$('#mLP').remove();
 	$('#mP').remove();
 	var cadena = "<div id='mCP'>";
-	cadena = cadena + "<h3>Bienvenido " + nick + "</h3>";
-	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-primary btn-md" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
+	cadena = cadena + "<h3 class='titles'>Bienvenido " + nick + "</h3>";
+	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
+	cadena = cadena + '<br>';
 	cadena = cadena + "<div class='row'><div class='col-sm-8'>";
-	cadena = cadena + "<h3>Crear Partida</h3>";
+	cadena = cadena + "<h3 class='titles'>Crear Partida</h3>";
 	cadena = cadena + '<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida">';
-	cadena = cadena + '<button type="button" id="crearPartidaBtn" class="btn btn-primary btn-md">Crear partida</button>';
-	cadena = cadena + "</div><div class='col-sm-4'><h3>Unirse</h3>";
-	cadena = cadena + '<button type="button" id="unirseAPartidaBtn" class="btn btn-primary btn-md">Unirse a partida</button>';
+	cadena = cadena + '<br>';
+	cadena = cadena + '<button type="button" id="crearPartidaBtn" class="btn  btn-md login50-form-btn">Crear partida</button>';
+	cadena = cadena + "</div><div class='col-sm-4'><h3 class='titles'>Unirse</h3>";
+	cadena = cadena + '<button type="button" id="unirseAPartidaBtn" class="btn  btn-md login50-form-btn">Unirse a partida</button>';
 	cadena = cadena + "</div></div>";
 
 	$('#inicio').append(cadena);
@@ -132,8 +141,9 @@ function mostrarPartida(data) {
 	$('#mLP').remove();
 	var cadena = "<div id='mP'>";
 	cadena = cadena + "<h3>Bienvenido a la partida: " + data.nombre + "</h3>";
-	cadena = cadena + '<p><button type="button" id="preparadoBtn" class="btn btn-primary btn-md" onclick="ws.preparado()"">Preparado</button> ';
-	cadena = cadena + ' <button type="button" id="salirBtn" class="btn btn-primary btn-md" onclick="ws.salir()"">Salir</button></p></div>';
+	cadena = cadena + '<div class="row">';
+	cadena = cadena + '<p><button type="button" id="preparadoBtn" class="btn login50-form-btn btn-md" onclick="ws.preparado()"">Preparado</button><br> ';
+	cadena = cadena + ' <button type="button" id="salirBtn" class="btn login50-form-btn btn-md" onclick="ws.salir()"">Salir</button></p><br></div></div>';
 	$('#inicio').append(cadena);
 }
 
@@ -151,7 +161,7 @@ function mostrarListaPartidas(data) {
 		cadena = cadena + '<tr>'
 		cadena = cadena + '<td>' + data[key].nombre + '</td>';
 		cadena = cadena + '<td>' + Object.keys(data[key].jugadores).length + '</td>';
-		cadena = cadena + '<td><button type="button" id="unirmeAPartidaBtn" class="btn btn-primary btn-md" onclick="ws.unirAPartida(\'' + data[key].idp + '\',\'' + nick + '\')">Unirse a partida</button></td>';
+		cadena = cadena + '<td><button type="button" id="unirmeAPartidaBtn" class="btn login50-form-btn btn-md" onclick="ws.unirAPartida(\'' + data[key].idp + '\',\'' + nick + '\')">Unirse a partida</button></td>';
 		cadena = cadena + '</tr>';
 	};
 	cadena = cadena + "</tbody></table></div>";
