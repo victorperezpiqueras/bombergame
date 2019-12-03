@@ -59,7 +59,8 @@ function ClienteRest() {
 			}
 			else {
 				$.removeCookie("usr");
-				mostrarAgregarUsuario();
+				//mostrarAgregarUsuario();
+				mostrarLoginUsuario();
 			}
 		});
 	}
@@ -75,7 +76,7 @@ function ClienteRest() {
 				}
 				else {
 					console.log("Usuario registrado");
-					mostrarLogin()
+					mostrarLoginUsuario()
 				}
 			},
 			contentType: 'application/json',
@@ -93,12 +94,57 @@ function ClienteRest() {
 					console.log('No se ha podido loguear');
 				}
 				else {
-					$.cookie("usr", JSON.stringify(data.nick));
+					$.cookie("usr", JSON.stringify(data));
 					mostrarUsuario(data);
 				}
 			},
 			contentType: 'application/json',
 			dataType: 'json'
 		});
+	};
+	this.actualizarUsuario = function (oldpass, newpass) {
+		var usr = JSON.parse($.cookie("usr"));
+		console.log("old:",oldpass," new:",newpass)
+		console.log(usr);
+		$.ajax({
+			type: 'PUT',
+			url: '/actualizarUsuario',
+			data: JSON.stringify({ uid: usr._id, oldpass: oldpass, newpass: newpass }),
+			success: function (data) {
+				if (data.res == "no ok") {
+					console.log("No se pudo actualizar")
+					//mostrarRegistro();
+				}
+				else {
+					$.cookie("usr", JSON.stringify(data));
+					console.log("Actualización correcta")
+					//mostrarCabecera();
+				}
+
+			},
+			contentType: 'application/json',
+			dataType: 'json'
+		});
+	};
+
+	this.eliminarUsuario = function () {
+		var usr = JSON.parse($.cookie("usr"));
+		$.ajax({
+			type: 'DELETE',
+			url: '/eliminarUsuario/' + usr._id,
+			data: '{}',
+			success: function (data) {
+				if (data.resultados == 1) {
+					//mostrarLogin();
+					//mostrarNavLogin();
+					console.log("Usuario eliminar");
+				}
+			},
+			contentType: 'application/json',
+			dataType: 'json'
+		});
 	}
+
+
+
 }

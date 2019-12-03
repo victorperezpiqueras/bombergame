@@ -12,6 +12,8 @@ function comprobarUsuario() {
 
 function mostrarRegistrarUsuario() {
 	$('#mAU').remove();
+	$('#mLU').remove();
+	$('#mRU').remove();
 	var cadena = "<div id='mRU'>";
 	cadena = cadena + "<h3>Registrar</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
@@ -35,6 +37,10 @@ function mostrarRegistrarUsuario() {
 }
 function mostrarLoginUsuario() {
 	$('#mAU').remove();
+	$('#mLU').remove();
+	$('#mRU').remove();
+	$('#mCP').remove();
+	
 	var cadena = "<div id='mLU'>";
 	cadena = cadena + "<h3>Login</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
@@ -53,7 +59,7 @@ function mostrarLoginUsuario() {
 	});
 }
 
-function mostrarAgregarUsuario() {
+function mostrarAgregarUsuario() {//deprecated
 	$('#mLP').remove();
 	$('#mP').remove();
 	$('#mCP').remove();
@@ -77,6 +83,8 @@ function mostrarAgregarUsuario() {
 
 function mostrarUsuario(data) {
 	$('#mAU').remove();
+	$('#mLU').remove();
+	$('#mRU').remove();
 	ws = new ClienteWS(data.nick);
 	ws.ini();
 	nick = data.nick;

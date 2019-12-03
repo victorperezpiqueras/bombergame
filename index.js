@@ -11,7 +11,7 @@ var ws = new srvWS.ServidorWS();
 var modelo = require("./servidor/modelo.js");
 
 var juego = new modelo.Juego();
-app.set('port', (process.env.PORT || 5001));
+app.set('port', (process.env.PORT || 5000));
 
 app.use(exp.static(__dirname + "/cliente"));
 
@@ -117,12 +117,28 @@ app.post("/loginUsuario", function (request, response) {
 		response.send("Hay campos vacios");
 		console.log("Hay campos vacios");
 	} else {
+		console.log(request.body);
 		juego.loginUsuario(request.body, function (resultados) {
 			response.send(resultados);
 			console.log("resultados:", resultados);
 		})
 	}
 });
+
+app.put("/actualizarUsuario", function (request, response) {
+	juego.actualizarUsuario(request.body, function (result) {
+		response.send(result);
+	});
+});
+
+app.delete("/eliminarUsuario/:uid", function (request, response) {
+	var uid = request.params.uid;
+	juego.eliminarUsuario(uid, function (result) {
+		response.send(result);
+	});
+});
+
+
 
 //console.log("Servidor escuchando en "+host+":"+port);
 //app.listen(port,host);

@@ -1,5 +1,7 @@
 var dao = require("./dao.js");
 var cifrado = require("./cifrado.js");
+var ObjectID = require("mongodb").ObjectID;
+
 function Juego() {
 	this.partidas = {};
 	this.usuarios = {};
@@ -124,45 +126,113 @@ function Juego() {
 		callback(this.partidas[idp]);
 	}
 	this.obtenerResultados = function (callback) {
-		this.dao.obtenerResultados(callback);
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerResultados(callback);
+			db.close();
+		});
 	}
 	this.obtenerResultadosNick = function (nick, callback) {
-		this.dao.obtenerResultadosCriterio({ nickGanador: nick }, callback);
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerResultadosCriterio({ nickGanador: nick }, callback);
+			db.close();
+		});
 	}
 	this.anotarResultado = function (partida, callback) {
-		var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores());
-		this.dao.insertarResultado(resultado, callback);
-	}
+		var juego = this;
+		this.dao.connect(function (db) {
+			var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores());
+			juego.dao.insertarResultado(resultado, callback);
+			db.close();
+		});
+
+	};
 	this.registrarUsuario = function (user, callback) {
 		var juego = this;
-		this.dao.obtenerUsuariosCriterio({ nick: user.nick, email: user.email }, function (usuarios) {
-			if (!usuarios) {
-				user.password = cifrado.encrypt(user.password);
-				console.log("Modelo-usuario:", user)
-				juego.dao.insertarUsuario(user, function (user) {
-					console.log("creado usuario")
-					callback({ "res": "ok" });
-				});
-			}
-			else {
-				callback({ "res": "no ok" });
-			}
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuariosCriterio({ $or: [{ nick: user.nick }, { email: user.email }] }, function (usuarios) {
+				if (!usuarios) {
+					user.password = cifrado.encrypt(user.password);
+					console.log("Modelo-usuario:", user)
+					juego.dao.insertarUsuario(user, function (user) {
+						console.log("creado usuario")
+						callback({ "res": "ok" });
+					});
+				}
+				else {
+					callback({ "res": "no ok" });
+				}
+				db.close();
+			});
 		});
-	}
+	};
 	this.loginUsuario = function (user, callback) {
 		var juego = this;
-		this.dao.obtenerUsuariosCriterio({ nick: user.nick, email: user.email }, function (usuario) {
-			if (usuario) {
-				var user = usuario;
-				user.password = cifrado.decrypt(user.password);
-				console.log("encontrado usuario")
-				callback(user);
-			}
-			else {
-				callback({ "res": "no ok" });
-			}
+		console.log(user);
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuariosCriterio({ nick: user.nick, password: cifrado.encrypt(user.password) }, function (usuario) {
+				if (usuario) {
+					console.log("encontrado usuario")
+					/* 				dpassword = cifrado.decrypt(usuario.password);
+					*/				/* console.log(dpassword)
+								console.log("uipass:", user.password) */
+					/* 		if (dpassword == user.password) {
+								console.log("match pass"); */
+					juego.agregarUsuario(usuario.nick, function () { })
+					callback(usuario);//ARREGLAR
+					/* }
+					else callback({ "res": "no ok" }); */
+				}
+				else {
+					//console.log(user)
+					callback({ "res": "no ok" });
+				}
+				db.close();
+			});
+		});
+	};
+	this.actualizarUsuario = function (user, callback) {
+		var oldC = cifrado.encrypt(user.oldpass);
+		var newC = cifrado.encrypt(user.newpass);
+		var juego = this;
+		console.log(user)
+		console.log(oldC)
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(user.uid), password: oldC }, function (usr) {
+				if (usr) {
+					usr.password = newC;
+					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+						console.log("Usuario modificado");
+						callback(usuario);//usr
+					});
+				}
+				else {
+					callback({ "res": "no ok" });
+				}
+				db.close();
+			});
+		});
+	};
+	this.eliminarUsuario = function (uid, callback) {
+		var juego = this;
+		var json = { 'resultados': -1 };
+		this.dao.connect(function (db) {
+			juego.dao.eliminarUsuario(uid, function (result) {
+				if (result.result.n == 0) {
+					console.log("No se pudo eliminar de usuarios");
+				}
+				else {
+					json = { "resultados": 1 };
+					console.log("Usuario eliminado de usuarios");
+					callback(json);
+				}
+				db.close();
+			});
 		});
 	}
+
+
 }
 
 function Partida(nombre, idp) {
@@ -325,8 +395,9 @@ function Final() {
 	}
 }
 
-function Usuario(nick) {
+function Usuario(nick/* , id */) {
 	this.nick = nick;
+	/* this.id = id; */
 	this.estado = "no preparado";
 	this.vidas = 3;
 	this.ini = function () {

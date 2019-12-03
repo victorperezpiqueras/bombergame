@@ -18,7 +18,6 @@ function Dao() {
 
     /* USUARIOS */
     this.insertarUsuario = function (usr, callback) {
-        //console.log("Insertar usuario:", usr)
         insertar(this.usuarios, usr, callback);
     };
     this.obtenerUsuarios = function (callback) {
@@ -26,7 +25,14 @@ function Dao() {
     };
     this.obtenerUsuariosCriterio = function (criterio, callback) {
         obtener(this.usuarios, criterio, callback);
-    }
+    };
+    this.modificarColeccionUsuarios = function (usr, callback) {
+        modificarColeccion(this.usuarios, usr, callback);
+    };
+    this.eliminarUsuario = function (uid, callback) {
+        eliminar(this.usuarios, { _id: ObjectID(uid) }, callback);
+    };
+
 
     /* HELPERS */
     function insertar(coleccion, elemento, callback) {
@@ -55,9 +61,28 @@ function Dao() {
             callback(col);
         });
     };
+    function modificarColeccion(coleccion, usr, callback) {
+        coleccion.findAndModify({ _id: ObjectID(usr._id) }, {}, usr, {}, function (err, result) {
+            if (err) {
+                console.log("No se pudo actualizar (método genérico)");
+            }
+            else {
+                console.log("Usuario actualizado");
+            }
+            callback(result);
+        });
+    };
+    function eliminar(coleccion, criterio, callback) {
+        coleccion.remove(criterio, function (err, result) {
+            if (!err) {
+                callback(result);
+            }
+        });
+    };
+
 
     /* CONNECTION */
-    this.connect = function () {
+    this.connect = function (callback) {
         var dao = this;
         mongo.connect("mongodb+srv://victorperezpiqueras:quieroquefuncione@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
             { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
@@ -84,10 +109,11 @@ function Dao() {
                             dao.usuarios = col;
                         }
                     });
+                    callback(database);
                 }
             })
     }
-    this.connect();
+   // this.connect();
 
 
 }
