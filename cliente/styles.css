@@ -1,5 +1,5 @@
 .titles {
-    font-family: Ubuntu-Bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: #2c2c2c;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .headerp{
-    font-family: Ubuntu-Bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     background-image:url(assets/images/header-img.jpg);
     background-size: 100%;
 }

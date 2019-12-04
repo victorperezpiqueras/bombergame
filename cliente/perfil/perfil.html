@@ -1,0 +1,43 @@
+<div id="mRU" class="container">
+    <div class="row align-items-center justify-content-center">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <span class="login100-form-title p-b-51">
+                Actualizar datos
+            </span>
+
+            <div class="wrap-input100 validate-input m-b-16" data-validate="Se requiere contraseña">
+                <input id="oldpass" class="input100" type="password" name="oldpass" placeholder="Contraseña antigua">
+                <span class="focus-input100"></span>
+            </div>
+            <div class="wrap-input100 validate-input m-b-16" data-validate="Se requiere contraseña">
+                <input id="newpass" class="input100" type="password" name="newpass" placeholder="Nueva contraseña">
+                <span class="focus-input100"></span>
+            </div>
+
+            <div class="container-login100-form-btn m-t-17">
+                <button id="actualizarBtn" class="login100-form-btn">
+                    Actualizar
+                </button>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <span class="login100-form-title p-b-51">
+                Eliminar cuenta
+            </span>
+                <button id="eliminarBtn" class="login100-form-btn">
+                    Eliminar
+                </button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#actualizarBtn').on('click', function () {
+        var oldpass = $('#oldpass').val();
+        var newpass = $('#newpass').val();
+        rest.actualizarUsuario(oldpass, newpass);
+    });
+    $('#eliminarBtn').on('click', function () {
+        rest.eliminarUsuario();
+    });
+</script>

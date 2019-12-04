@@ -11,9 +11,10 @@ function comprobarUsuario() {
 }
 
 function mostrarRegistrarUsuario() {
-	$('#mAU').remove();
+	/* $('#mAU').remove();
 	$('#mLU').remove();
-	$('#mRU').remove();
+	$('#mRU').remove(); */
+	clear()
 /* 	var cadena = "<div id='mRU'>";
 	cadena = cadena + "<h3>Registrar</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
@@ -39,11 +40,11 @@ function mostrarRegistrarUsuario() {
 	});
 }
 function mostrarLoginUsuario() {
-	$('#mAU').remove();
+	/* $('#mAU').remove();
 	$('#mLU').remove();
 	$('#mRU').remove();
-	$('#mCP').remove();
-	
+	$('#mCP').remove(); */
+	clear()
 	/* var cadena = "<div id='mLU'>";
 	cadena = cadena + "<h3>Login</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
@@ -64,6 +65,12 @@ function mostrarLoginUsuario() {
 		$('#inicio').load('login/login.html');
 	});
 	
+}
+function mostrarCuentaUsuario(){
+	clear()
+	$(document).ready(function() {
+		$('#inicio').load('perfil/perfil.html');
+	});
 }
 
 function mostrarAgregarUsuario() {//deprecated
@@ -200,4 +207,12 @@ function mostrarCanvas() {
 
 function borrarCanvas() {
 	$('canvas').remove();
+}
+
+function clear(){
+	$('#mAU').remove();
+	$('#mLU').remove();
+	$('#mRU').remove();
+	$('#mCP').remove();
+	$('#mPJ').remove();
 }

@@ -113,13 +113,13 @@ function ClienteRest() {
 			data: JSON.stringify({ uid: usr._id, oldpass: oldpass, newpass: newpass }),
 			success: function (data) {
 				if (data.res == "no ok") {
-					console.log("No se pudo actualizar")
+					mostrarAviso("La contraseña no es correcta")
 					//mostrarRegistro();
 				}
 				else {
 					$.cookie("usr", JSON.stringify(data));
 					console.log("Actualización correcta")
-					//mostrarCabecera();
+					mostrarUsuario(data);
 				}
 
 			},
@@ -138,7 +138,8 @@ function ClienteRest() {
 				if (data.resultados == 1) {
 					//mostrarLogin();
 					//mostrarNavLogin();
-					console.log("Usuario eliminar");
+					alert("Usuario eliminado");
+					mostrarLoginUsuario();
 				}
 			},
 			contentType: 'application/json',
