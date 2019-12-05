@@ -80,7 +80,7 @@ function mostrarAgregarUsuario() {//deprecated
 	var cadena = "<div id='mAU'>";
 	cadena = cadena + "<h3>Usuario</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6'>";
-	cadena = cadena + '<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre usuario">';
+	cadena = cadena + '<input id="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre usuario"';
 	cadena = cadena + "</div><div class='col-sm-6'>"
 	cadena = cadena + '<button type="button" id="inicioBtn" class="btn btn-primary btn-md">Iniciar Usuario</button>';
 	cadena = cadena + "</div></div>";
@@ -114,21 +114,22 @@ function mostrarCrearPartida(nick) {
 	$('#mCP').remove();
 	$('#mLP').remove();
 	$('#mP').remove();
-	var cadena = "<div id='mCP'>";
+	clear();
+/* 	var cadena = "<div id='mCP'>";
 	cadena = cadena + "<h3 class='titles'>Bienvenido " + nick + "</h3>";
-	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
+	 cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
 	cadena = cadena + '<br>';
 	cadena = cadena + "<div class='row'><div class='col-sm-8'>";
 	cadena = cadena + "<h3 class='titles'>Crear Partida</h3>";
-	cadena = cadena + '<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida">';
+	cadena = cadena + '<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida" pattern="[^<]+">';//PATTERN
 	cadena = cadena + '<br>';
 	cadena = cadena + '<button type="button" id="crearPartidaBtn" class="btn  btn-md login50-form-btn">Crear partida</button>';
 	cadena = cadena + "</div><div class='col-sm-4'><h3 class='titles'>Unirse</h3>";
 	cadena = cadena + '<button type="button" id="unirseAPartidaBtn" class="btn  btn-md login50-form-btn">Unirse a partida</button>';
-	cadena = cadena + "</div></div>";
-
-	$('#inicio').append(cadena);
-	$('#crearPartidaBtn').on('click', function () {
+	cadena = cadena + "</div></div>"; */
+ 
+	//$('#inicio').append(cadena);
+	/* $('#crearPartidaBtn').on('click', function () {
 		var nombre = $('#nombrePartida').val();
 		if (nombre == "") {
 			nombre = "SinNombre";
@@ -139,6 +140,11 @@ function mostrarCrearPartida(nick) {
 	$('#unirseAPartidaBtn').on('click', function () {
 		//rest.obtenerPartidas();
 		ws.obtenerPartidas();
+	});
+ */
+	
+	$(document).ready(function() {
+		$('#inicio').load('perfil/crearPartida.html');
 	});
 
 }

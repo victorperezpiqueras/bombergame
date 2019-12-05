@@ -1,0 +1,33 @@
+<div id='mCP'>
+    <h3 class='titles'>Bienvenido</h3>
+    <p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar
+            sesión</button></p>
+    <br>
+    <div class='row'>
+        <div class='col-sm-8'>
+            <h3 class='titles'>Crear Partida</h3>
+            <input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida"
+            pattern="/^[a-z]{0,20}$/">
+            <br>
+            <button type="button" id="crearPartidaBtn" class="btn  btn-md login50-form-btn">Crear partida</button>
+        </div>
+        <div class='col-sm-4'>
+            <h3 class='titles'>Unirse</h3>
+            <button type="button" id="unirseAPartidaBtn" class="btn  btn-md login50-form-btn">Unirse a partida</button>
+        </div>
+    </div>
+
+    <script>
+        $('#crearPartidaBtn').on('click', function () {
+            var nombre = $('#nombrePartida').val();
+            if (nombre == "") {
+                nombre = "SinNombre";
+            }
+            //rest.crearPartida(nombre,nick);
+            ws.crearPartida(nombre);
+        });
+        $('#unirseAPartidaBtn').on('click', function () {
+            //rest.obtenerPartidas();
+            ws.obtenerPartidas();
+        });
+    </script>
