@@ -90,7 +90,7 @@ function Dao() {
     /* CONNECTION */
     this.connect = function (callback) {
         var dao = this;
-        mongo.connect("mongodb+srv://"+mongoUser+":"+mongoPass+"@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
+        mongo.connect("mongodb+srv://victorperezpiqueras:quieroquefuncione@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
             { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
                 if (err) {
                     console.log("No se pudo conectar a la base de datos");
