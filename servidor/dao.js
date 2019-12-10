@@ -1,6 +1,12 @@
 var mongo = require("mongodb").MongoClient;
 var ObjectID = require("mongodb").ObjectID;
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const mongoUser=process.env.mongoUser;
+const mongoPass=process.env.mongoPass;
+
 function Dao() {
     this.resultados = undefined;
     this.usuarios = undefined;
@@ -84,7 +90,7 @@ function Dao() {
     /* CONNECTION */
     this.connect = function (callback) {
         var dao = this;
-        mongo.connect("mongodb+srv://victorperezpiqueras:quieroquefuncione@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
+        mongo.connect("mongodb+srv://"+mongoUser+":"+mongoPass+"@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
             { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
                 if (err) {
                     console.log("No se pudo conectar a la base de datos");

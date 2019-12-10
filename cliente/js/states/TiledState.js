@@ -6,6 +6,7 @@ Bomberman.TiledState = function () {
     
     this.prefab_classes = {
         "player": Bomberman.Player.prototype.constructor,
+        "remoto": Bomberman.Remoto.prototype.constructor,
         "enemy": Bomberman.Enemy.prototype.constructor
     };
 };

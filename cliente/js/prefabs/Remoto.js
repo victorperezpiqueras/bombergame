@@ -1,13 +1,12 @@
 var Bomberman = Bomberman || {};
 
-Bomberman.Player = function (game_state, name, position, properties) {
+Bomberman.Remoto = function (game_state, name, position, properties) {
     "use strict";
     Bomberman.Prefab.call(this, game_state, name, position, properties);
 
     this.anchor.setTo(0.5);
     this.name = name;
     this.estado = "vivo";
-    ws.spriteLocal = this;
     //ws.jugador = this;
 
     this.walking_speed = +properties.walking_speed;
@@ -25,88 +24,81 @@ Bomberman.Player = function (game_state, name, position, properties) {
     this.game_state.game.physics.arcade.enable(this);
     this.body.setSize(14, 12, 0, 4);
 
-    this.x=ws.jugador.posicion.x;
-    this.y=ws.jugador.posicion.y;
+    this.x = ws.rival.posicion.x;
+    this.y = ws.rival.posicion.y;
 
     this.initial_position = new Phaser.Point(this.x, this.y);
     //this.ant=this.initial_position;
 
+    ws.spriteRival = this;
+
     this.cursors = this.game_state.game.input.keyboard.createCursorKeys();
 };
 
-Bomberman.Player.prototype = Object.create(Bomberman.Prefab.prototype);
-Bomberman.Player.prototype.constructor = Bomberman.Player;
+Bomberman.Remoto.prototype = Object.create(Bomberman.Prefab.prototype);
+Bomberman.Remoto.prototype.constructor = Bomberman.Remoto;
 
-Bomberman.Player.prototype.update = function () {
+Bomberman.Remoto.prototype.update = function () {
     "use strict";
     this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
     this.game_state.game.physics.arcade.collide(this, this.game_state.groups.bombs);
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.explosions, this.kill, null, this);
-    this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.remotos, this.killPlayer, null, this);//
+    this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.players, this.killRemoto, null, this);//
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.enemies, this.kill, null, this);
-
-    if (this.cursors.left.isDown && this.body.velocity.x <= 0) {
-        // move left
-        ws.mover("left", { x: this.x, y: this.y });
-        this.body.velocity.x = -this.walking_speed;
-        if (this.body.velocity.y === 0) {
-            // change the scale, since we have only one animation for left and right directions
-            this.scale.setTo(-1, 1);
-            this.animations.play("walking_left");
+    /*     
+        if (this.cursors.left.isDown && this.body.velocity.x <= 0) {
+            // move left
+            this.body.velocity.x = -this.walking_speed;
+            if (this.body.velocity.y === 0) {
+                // change the scale, since we have only one animation for left and right directions
+                this.scale.setTo(-1, 1);
+                this.animations.play("walking_left");
+            }
+        } else if (this.cursors.right.isDown && this.body.velocity.x >= 0) {
+            // move right
+            this.body.velocity.x = +this.walking_speed;
+            if (this.body.velocity.y === 0) {
+                // change the scale, since we have only one animation for left and right directions
+                this.scale.setTo(1, 1);
+                this.animations.play("walking_right");
+            }
+        } else {
+            this.body.velocity.x = 0;
         }
-    } else if (this.cursors.right.isDown && this.body.velocity.x >= 0) {
-        // move right
-        ws.mover("right", { x: this.x, y: this.y });
-        this.body.velocity.x = +this.walking_speed;
-        if (this.body.velocity.y === 0) {
-            // change the scale, since we have only one animation for left and right directions
-            this.scale.setTo(1, 1);
-            this.animations.play("walking_right");
+    
+        if (this.cursors.up.isDown && this.body.velocity.y <= 0) {
+            // move up
+            this.body.velocity.y = -this.walking_speed;
+            if (this.body.velocity.x === 0) {
+                this.animations.play("walking_up");
+            }
+        } else if (this.cursors.down.isDown && this.body.velocity.y >= 0) {
+            // move down
+            this.body.velocity.y = +this.walking_speed;
+            if (this.body.velocity.x === 0) {
+                this.animations.play("walking_down");
+            }
+        } else {
+            this.body.velocity.y = 0;
         }
-    } else {
-        ws.mover("velX", { x: this.x, y: this.y });
-        this.body.velocity.x = 0;
-    }
-
-    if (this.cursors.up.isDown && this.body.velocity.y <= 0) {
-        // move up
-        ws.mover("up", { x: this.x, y: this.y });
-        this.body.velocity.y = -this.walking_speed;
-        if (this.body.velocity.x === 0) {
-            this.animations.play("walking_up");
+        
+        if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
+            // stop current animation
+            this.animations.stop();
+            this.frame = this.stopped_frames[this.body.facing];
         }
-    } else if (this.cursors.down.isDown && this.body.velocity.y >= 0) {
-        // move down
-        ws.mover("down", { x: this.x, y: this.y });
-        this.body.velocity.y = +this.walking_speed;
-        if (this.body.velocity.x === 0) {
-            this.animations.play("walking_down");
+        
+        if (!this.dropping_bomb && this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+            this.drop_bomb();
+            this.dropping_bomb = true;
         }
-    } else {
-        ws.mover("velY", { x: this.x, y: this.y });
-        this.body.velocity.y = 0;
-    }
-
-    if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
-        // stop current animation
-        ws.mover("stopAnimation", { x: this.x, y: this.y });
-        this.animations.stop();
-        this.frame = this.stopped_frames[this.body.facing];
-    }
-
-    if (!this.dropping_bomb && this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
-        ws.mover("dropTrue", { x: this.x, y: this.y });
-        this.drop_bomb();
-        this.dropping_bomb = true;
-    }
-
-    if (this.dropping_bomb && !this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
-        ws.mover("dropFalse", { x: this.x, y: this.y });
-        this.dropping_bomb = false;
-    }
+        
+        if (this.dropping_bomb && !this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+            this.dropping_bomb = false;
+        } */
 };
 
-// Bomberman.Player.prototype.bomba=function(){
+// Bomberman.Remoto.prototype.bomba=function(){
 //     if (this.estado=="vivo"){
 //         this.estado="herido";
 //         console.log("impacto de bomba");
@@ -114,9 +106,70 @@ Bomberman.Player.prototype.update = function () {
 //         this.y=this.initial_position.y;
 //         ws.jugadorHerido();
 //     }
-// }
 
-Bomberman.Player.prototype.kill = function () {
+// }
+Bomberman.Remoto.prototype.mover = function (operacion, posicion) {
+    if (operacion == "left") {
+        // move left
+        this.body.velocity.x = -this.walking_speed;
+        if (this.body.velocity.y === 0) {
+            // change the scale, since we have only one animation for left and right directions
+            this.scale.setTo(-1, 1);
+            this.animations.play("walking_left");
+        }
+    }
+    if (operacion == "right") {
+        // move right
+        this.body.velocity.x = +this.walking_speed;
+        if (this.body.velocity.y === 0) {
+            // change the scale, since we have only one animation for left and right directions
+            this.scale.setTo(1, 1);
+            this.animations.play("walking_right");
+        }
+    }
+    if (operacion == "velX") {
+        this.body.velocity.x = 0;
+    }
+    if (operacion == "up") {
+        // move up
+        this.body.velocity.y = -this.walking_speed;
+        if (this.body.velocity.x === 0) {
+            this.animations.play("walking_up");
+        }
+    }
+    if (operacion == "down") {
+        // move down
+        this.body.velocity.y = +this.walking_speed;
+        if (this.body.velocity.x === 0) {
+            this.animations.play("walking_down");
+        }
+    }
+    if (operacion == "velY") {
+        this.body.velocity.x = 0;
+    }
+
+    if (operacion == "stopAnimation") {
+        // stop current animation
+        this.animations.stop();
+        this.frame = this.stopped_frames[this.body.facing];
+    }
+
+    if (operacion == "dropTrue") {
+        this.drop_bomb();
+        this.dropping_bomb = true;
+    }
+
+    if (operacion == "dropFalse") {
+        this.dropping_bomb = false;
+    }
+
+    if (operacion == "inicio") {
+        this.x = this.initial_position.x;
+        this.y = this.initial_position.y;
+    }
+};
+
+Bomberman.Remoto.prototype.kill = function () {
     if (this.estado == "vivo") {
         this.estado = "herido";
         this.x = this.initial_position.x;
@@ -131,16 +184,15 @@ Bomberman.Player.prototype.killPlayer = function () {
         this.estado = "herido";
         this.x = this.initial_position.x;
         this.y = this.initial_position.y;
-        //ws.jugadorHerido();
-        ws.mover("inicio", { x: this.x, y: this.y });
     }
+    ws.mover("inicio", { x: this.x, y: this.y });
 }
 
-Bomberman.Player.prototype.volverAInicio = function () {
+Bomberman.Remoto.prototype.volverAInicio = function () {
     this.estado = "vivo";
 }
 
-Bomberman.Player.prototype.drop_bomb = function () {
+Bomberman.Remoto.prototype.drop_bomb = function () {
     "use strict";
     var bomb, bomb_name, bomb_position, bomb_properties;
     // get the first dead bomb from the pool

@@ -3,6 +3,10 @@ function ClienteWS(nick) {
 	this.nick = nick;
 	this.idp = undefined;
 	this.jugador = undefined;
+	this.rival = undefined;
+	this.spriteLocal = undefined;
+	this.spriteRival = undefined;
+
 	this.ini = function () {
 		this.socket = io.connect();
 		this.lanzarSocketSrv();
@@ -16,7 +20,6 @@ function ClienteWS(nick) {
 			this.socket.emit('crearPartida', this.nick, nombrePartida);
 			console.log("usuario " + this.nick + " crea partida " + nombrePartida);
 		}
-
 	}
 	this.obtenerPartidas = function () {
 		this.socket.emit("obtenerPartidas");
@@ -40,6 +43,19 @@ function ClienteWS(nick) {
 	this.jugadorHerido = function () {
 		this.socket.emit("jugadorHerido", this.idp, this.nick);
 	}
+	this.mover = function (operacion, posicion) {
+		if (this.rival) this.socket.emit("mover", this.idp, this.nick, operacion, posicion);
+	}
+	this.obtenerRival = function (jugadores) {
+		var rival = undefined;
+		for (var key in jugadores) {
+			if (key != ws.nick) {
+				rival = jugadores[key];
+			}
+		}
+		return rival;
+	}
+
 	this.lanzarSocketSrv = function () {
 		var cli = this;
 		this.socket.on('connect', function () {
@@ -72,8 +88,10 @@ function ClienteWS(nick) {
 		this.socket.on('otropreparado', function (jugadores) {
 			mostrarListaJugadores(jugadores);
 		});
-		this.socket.on('aJugar', function () {
-			mostrarCanvas();
+		this.socket.on('aJugar', function (data) {
+			cli.jugador = data.jugadores[cli.nick];
+			cli.rival = cli.obtenerRival(data.jugadores);
+			mostrarCanvas(data.numJugadores);
 		});
 		this.socket.on('anotado', function () { //function(resultados)
 			//mostrarListaResultados(resultados)
@@ -86,7 +104,13 @@ function ClienteWS(nick) {
 		});
 		this.socket.on("sigueVivo", function () {
 			console.log("sigue vivo");
-			cli.jugador.volverAInicio();
+			//cli.jugador.volverAInicio();
+			cli.spriteLocal.volverAInicio();
+		});
+		this.socket.on("mover", function (operacion, posicion) {
+			if (cli.spriteRival) {
+				cli.spriteRival.mover(operacion, posicion);
+			}
 		})
 	}
 }

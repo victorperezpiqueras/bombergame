@@ -157,7 +157,8 @@ function Juego() {
 					console.log("Modelo-usuario:", user)
 					juego.dao.insertarUsuario(user, function (user) {
 						console.log("creado usuario")
-						callback({ "res": "ok" });
+						//callback({ "res": "ok" });
+						callback(user);
 					});
 				}
 				else {
@@ -240,10 +241,17 @@ function Partida(nombre, idp) {
 	this.nickGanador = "los bichos";
 	this.nivel = 1;
 	this.idp = idp;
+
 	this.jugadores = {};
 	this.enemigos = {};
+
+	this.posiciones = [{ x: 16, y: 32 }, { x: 16, y: 224 }]; //{x:16*n,y:32}
+
+	this.numJugadores = 0;
 	this.numeroEnemigos = 4;
+
 	this.fase = new Inicial();
+
 	this.agregarJugador = function (usr) {
 		this.fase.agregarJugador(usr, this);
 	}
@@ -272,8 +280,8 @@ function Partida(nombre, idp) {
 	this.setTodosVivos = function () {
 		for (var key in this.jugadores) {
 			this.jugadores[key].estado = "vivo";
-
 		}
+		this.numJugadores = Object.keys(this.jugadores).length;
 	}
 	this.todosMuertos = function () {
 		res = true;
@@ -318,6 +326,14 @@ function Partida(nombre, idp) {
 		}
 		return nickJugadores;
 	}
+	this.asignarPosicion = function () {
+		var ind = 0;
+		for (var key in this.jugadores) {
+			this.jugadores[key].posicion = this.posiciones[ind];
+			ind++;
+		}
+	}
+
 }
 
 function Inicial() {
@@ -330,6 +346,7 @@ function Inicial() {
 		if (partida.todosPreparados()) {
 			partida.fase = new Jugando();
 			partida.setTodosVivos();
+			partida.asignarPosicion();
 		}
 	}
 	this.enviarResultado = function (nick, partida) {
