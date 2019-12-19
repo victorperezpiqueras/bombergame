@@ -203,6 +203,7 @@ function mostrarCanvas(num) {
 	game.state.add("BootState", new Bomberman.BootState());
 	game.state.add("LoadingState", new Bomberman.LoadingState());
 	game.state.add("TiledState", new Bomberman.TiledState());
+
 	game.state.start("BootState", true, false, "assets/levels/level1_"+num+"player.json", "TiledState");
 	console.log("assets/levels/level1_"+num+"player.json");
 }
