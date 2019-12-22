@@ -131,6 +131,12 @@ app.put("/actualizarUsuario", function (request, response) {
 	});
 });
 
+app.put("/actualizarDatosUsuario", function (request, response) {
+	juego.actualizarDatosUsuario(request.body, function (result) {
+		response.send(result);
+	});
+});
+
 app.delete("/eliminarUsuario/:uid", function (request, response) {
 	var uid = request.params.uid;
 	juego.eliminarUsuario(uid, function (result) {
@@ -138,6 +144,12 @@ app.delete("/eliminarUsuario/:uid", function (request, response) {
 	});
 });
 
+app.get("/obtenerStatsPartidas/:nick", function (request, response) {
+	var nick = request.params.nick;
+	juego.statsPartidas(nick, function (stats) {
+		response.send(stats);
+	})
+});
 
 
 //console.log("Servidor escuchando en "+host+":"+port);

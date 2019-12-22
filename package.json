@@ -24,5 +24,6 @@
     "jasmine": "^3.5.0",
     "mongodb": "^3.3.4",
     "socket.io": "^2.3.0"
-  }
+  },
+  "devDependencies": {}
 }

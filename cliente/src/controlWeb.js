@@ -10,73 +10,62 @@ function comprobarUsuario() {
 	}
 }
 
-function mostrarRegistrarUsuario() {
-	/* $('#mAU').remove();
-	$('#mLU').remove();
-	$('#mRU').remove(); */
-	clear()
-/* 	var cadena = "<div id='mRU'>";
-	cadena = cadena + "<h3>Registrar</h3>";
-	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
-	cadena = cadena + "<div class='form-group'>";
-	cadena = cadena + '<input id="nick" type="text" class="form-control" name="nick" placeholder="Nick">';
-	cadena = cadena + '<input id="email" type="text" class="form-control" name="email" placeholder="Email">';
-	cadena = cadena + '<input id="emailr" type="text" class="form-control" name="emailr" placeholder="Repetir email">';
-	cadena = cadena + '<input id="password" type="text" class="form-control" name="password" placeholder="Contraseña">';
-	cadena = cadena + '<button class="btn btn-primary" id="registrarBtn" type="submit">Registrar</button>';
-	cadena = cadena + "</div>";
-	cadena = cadena + "</div></div></div>";
-	$('#inicio').append(cadena);
+function mostrarInicio() {
+	clear();
+	if ($.cookie("usr")) {
+		$(document).ready(function () {
+			$('#inicio').load('perfil/perfil.html');
+		});
+	}
+	else {
+		mostrarAviso("Debes iniciar sesión");
+		mostrarLoginUsuario();
+	}
+}
 
-	$('#registrarBtn').on('click', function () {
-		var nick = $('#nick').val();
-		var email = $('#email').val();
-		var emailr = $('#emailr').val();
-		var password = $('#password').val();
-		rest.registrarUsuario(nick,email,emailr,password);
-	}); */
-	$(document).ready(function() {
+function mostrarTutorial() {
+	clear()
+	$(document).ready(function () {
+		$('#inicio').load('tutorial/tutorial.html');
+	});
+}
+function mostrarRegistrarUsuario() {
+	clear();
+	mostrarNavDefault();
+	$(document).ready(function () {
 		$('#inicio').load('login/registro.html');
 	});
 }
 function mostrarLoginUsuario() {
-	/* $('#mAU').remove();
-	$('#mLU').remove();
-	$('#mRU').remove();
-	$('#mCP').remove(); */
-	clear()
-	/* var cadena = "<div id='mLU'>";
-	cadena = cadena + "<h3>Login</h3>";
-	cadena = cadena + "<div class='row'><div class='col-sm-6' >";
-	cadena = cadena + "<div class='form-group'>";
-	cadena = cadena + '<input id="nickLogin" type="text" class="form-control" name="nick" placeholder="Nick">';
-	cadena = cadena + '<input id="passwordLogin" type="text" class="form-control" name="password" placeholder="Contraseña">';
-	cadena = cadena + '<button class="btn btn-primary" id="loginBtn" type="submit">Login</button>';
-	cadena = cadena + "</div>";
-	cadena = cadena + "</div></div></div>";
-	$('#inicio').append(cadena);
-
-	$('#loginBtn').on('click', function () {
-		var nick = $('#nickLogin').val();
-		var password = $('#passwordLogin').val();		
-		rest.loginUsuario(nick,password);
-	}); */
-	$(document).ready(function() {
+	clear();
+	mostrarNavDefault();
+	$(document).ready(function () {
 		$('#inicio').load('login/login.html');
 	});
-	
+
 }
-function mostrarCuentaUsuario(){
-	clear()
-	$(document).ready(function() {
+function mostrarCuentaUsuario() {
+	clear();
+	$(document).ready(function () {
 		$('#inicio').load('perfil/perfil.html');
 	});
 }
 
+function mostrarNavLogged() {
+	$('#nav-default').remove();
+	$(document).ready(function () {
+		$('#navbar-main').load('nav/nav-logged.html');
+	});
+}
+function mostrarNavDefault() {
+	$('#nav-logged').remove();
+	$(document).ready(function () {
+		$('#navbar-main').load('nav/nav-default.html');
+	});
+}
+
 function mostrarAgregarUsuario() {//deprecated
-	$('#mLP').remove();
-	$('#mP').remove();
-	$('#mCP').remove();
+	clear();
 	var cadena = "<div id='mAU'>";
 	cadena = cadena + "<h3>Usuario</h3>";
 	cadena = cadena + "<div class='row'><div class='col-sm-6'>";
@@ -102,6 +91,7 @@ function mostrarUsuario(data) {
 	ws = new ClienteWS(data.nick);
 	ws.ini();
 	nick = data.nick;
+	mostrarNavLogged();
 	mostrarCrearPartida(data.nick);
 }
 
@@ -111,9 +101,8 @@ function mostrarAviso(msg) {
 }
 
 function mostrarCrearPartida(nick) {
-	$('#mCP').remove();
-	$('#mLP').remove();
-	$('#mP').remove();
+	clear();
+	var nick = JSON.parse($.cookie("usr")).nick;
 	var cadena = "<div id='mCP'>";
 	cadena = cadena + "<h3 class='titles'>Bienvenido " + nick + "</h3>";
 	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
@@ -144,8 +133,7 @@ function mostrarCrearPartida(nick) {
 }
 
 function mostrarPartida(data) {
-	$('#mCP').remove();
-	$('#mLP').remove();
+	clear();
 	var cadena = "<div id='mP'>";
 	cadena = cadena + "<h3>Bienvenido a la partida: " + data.nombre + "</h3>";
 	cadena = cadena + '<div class="row">';
@@ -155,7 +143,7 @@ function mostrarPartida(data) {
 }
 
 function mostrarListaPartidas(data) {
-	$('#mCP').remove();
+	clear();
 	var numeroPartidas = Object.keys(data).length;
 	var cadena = "<div id='mLP'>";
 	cadena = cadena + "<h3>Lista de partidas</h3>";
@@ -176,9 +164,7 @@ function mostrarListaPartidas(data) {
 }
 
 function mostrarListaJugadores(jugadores) {
-	//$('#mCP').remove();
 	$('#mLJ').remove();
-	//var numeroPartidas=Object.keys(data).length;
 	var cadena = "<div id='mLJ'>";
 	cadena = cadena + "<h3>Lista de jugadores</h3>";
 	cadena = cadena + '<table class="table"><thead><tr>';
@@ -196,6 +182,34 @@ function mostrarListaJugadores(jugadores) {
 	$('#mP').append(cadena);
 }
 
+function mostrarResultados(data) {
+	clear();
+	var numeroPartidas = Object.keys(data).length;
+	var cadena = "<div id='mLR'>";
+	cadena = cadena + "<h3>RESULTADOS</h3><hr>";
+	//cadena=cadena+'<ul class="list-group">';
+	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white"><thead class="thead-dark"><tr>';
+	cadena = cadena + '<th scope="col">Partida</th><th scope="col">Ganador</th><th>Nivel</th><th>Jugadores</th>';
+	cadena = cadena + '</tr></thead>';
+	cadena = cadena + '<tbody>';
+	for (var key in data) {
+		cadena = cadena + '<tr>'
+		cadena = cadena + '<td>' + data[key].nombrePartida + '</td>';
+		cadena = cadena + '<td>' + data[key].nickGanador + '</td>';
+		cadena = cadena + '<td>' + data[key].nivel + '</td>';
+		cadena = cadena + '<td>';
+		for (var i = 0; i < Object.keys(data[key].jugadores).length; i++) {
+			cadena = cadena + data[key].jugadores[i];
+			if (i + 1 < Object.keys(data[key].jugadores).length) cadena = cadena + ', ';
+		}
+		cadena = cadena + '</td>';
+		cadena = cadena + '</tr>';
+	};
+	cadena = cadena + "</tbody></table>";
+	cadena = cadena + "<button type='button' id='salirBtn' class='btn login50-form-btn btn-md' onclick='mostrarCrearPartida()'>Volver</button></div>";
+	$('#inicio').append(cadena);
+}
+
 function mostrarCanvas(num) {
 	console.log(num);
 	$('#mLJ').remove();
@@ -204,18 +218,38 @@ function mostrarCanvas(num) {
 	game.state.add("LoadingState", new Bomberman.LoadingState());
 	game.state.add("TiledState", new Bomberman.TiledState());
 
-	game.state.start("BootState", true, false, "assets/levels/level1_"+num+"player.json", "TiledState");
-	console.log("assets/levels/level1_"+num+"player.json");
+	game.state.start("BootState", true, false, "assets/levels/level1_" + num + "player.json", "TiledState");
+	console.log("assets/levels/level1_" + num + "player.json");
 }
 
 function borrarCanvas() {
 	$('canvas').remove();
 }
 
-function clear(){
+function clear() {
 	$('#mAU').remove();
 	$('#mLU').remove();
 	$('#mRU').remove();
 	$('#mCP').remove();
 	$('#mPJ').remove();
+	$('#mT').remove();
+
+	$('#mLP').remove();
+	$('#mLR').remove();
+	$('#mP').remove();
+}
+
+function mostrarCargando() {
+	var cadena = '<div id="loading" class="spinner-border text-secondary loading text-center" role="status">';
+	cadena = cadena + '<span class="sr-only">Loading...</span></div>';
+	$('#main-container').append(cadena);
+}
+function quitarCargando() {
+	$('#loading').remove();
+}
+
+function mostrarPartidasGanadas(stats) {
+	$('#cuenta-partidas-ganadas').text("Partidas ganadas: " + stats.partidasGanadas);
+	$('#cuenta-partidas-jugadas').text("Partidas jugadas: " + stats.partidasJugadas);
+	$('#cuenta-partidas-ratio').text("Ratio de victoria: " + stats.ratio);
 }

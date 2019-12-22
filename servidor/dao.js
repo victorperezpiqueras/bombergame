@@ -20,7 +20,10 @@ function Dao() {
     };
     this.obtenerResultadosCriterio = function (criterio, callback) {
         obtener(this.resultados, criterio, callback);
-    }
+    };
+    /* this.modificarColeccionResultados = function (res, callback) {
+        modificarColeccion(this.resultados, res, callback);
+    }; */
 
     /* USUARIOS */
     this.insertarUsuario = function (usr, callback) {
@@ -90,7 +93,7 @@ function Dao() {
     /* CONNECTION */
     this.connect = function (callback) {
         var dao = this;
-        mongo.connect("mongodb+srv://"+mongoUser+":"+mongoPass+"@clustergame-safci.mongodb.net/test?retryWrites=true&w=majority",
+        mongo.connect("mongodb+srv://"+mongoUser+":"+mongoPass+"@clustergame-safci.mongodb.net/bombergame?retryWrites=true&w=majority",
             { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
                 if (err) {
                     console.log("No se pudo conectar a la base de datos");

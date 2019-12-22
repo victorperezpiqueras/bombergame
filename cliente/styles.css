@@ -18,8 +18,53 @@
     font-size: large;
 }
 
-.headerp{
+.headerp {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    background-image:url(assets/images/header-img.jpg);
+    background-image: url(assets/images/header-img.jpg);
     background-size: 100%;
 }
+
+.loading {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+}
+
+.div-cuenta {
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.div-cuenta-top {
+    vertical-align: top;
+    display: inline-block;
+}
+
+/* SOCIAL MEDIA ICONS */
+
+ .fa-social {
+    border-radius: 50%;
+    padding: 10px;
+} 
+
+.fa-social:hover {
+    opacity: 0.7;
+}
+
+.fa-twitter {
+    background: #55ACEE;
+    color: white;
+}
+
+.fa-linkedin {
+    background: #007bb5;
+    color: white;
+}
+
+.fa-youtube {
+    background: #bb0000;
+    color: white;
+  }

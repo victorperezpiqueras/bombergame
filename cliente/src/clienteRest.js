@@ -45,6 +45,13 @@ function ClienteRest() {
 			mostrarListaPartidas(data);
 		});
 	}
+	this.obtenerResultados = function () {
+		mostrarCargando();
+		$.getJSON("/obtenerResultados", function (data) {
+			quitarCargando();
+			mostrarResultados(data);
+		});
+	}
 	this.obtenerJugadores = function (nombrePartida) {
 		$.getJSON("/obtenerJugadores/" + nombrePartida, function (data) {
 			console.log(data);
@@ -61,23 +68,26 @@ function ClienteRest() {
 			else {
 				$.removeCookie("usr");
 				//mostrarAgregarUsuario();
+
 				mostrarLoginUsuario();
 			}
 		});
 	}
 	this.registrarUsuario = function (nick, email, emailr, password) {
+		mostrarCargando();
 		$.ajax({
 			type: 'POST',
 			url: '/registrarUsuario',
 			data: JSON.stringify({ nick: nick, email: email, emailr: emailr, password: password }),
 			success: function (data) {
+				quitarCargando();
 				if (data.res == "no ok") {
 					mostrarAviso("Registro incorrecto");
 					console.log('No se ha podido registrar');
 				}
 				else {
 					console.log("Usuario registrado");
-					mostrarLoginUsuario()
+					mostrarLoginUsuario();
 				}
 			},
 			contentType: 'application/json',
@@ -85,11 +95,13 @@ function ClienteRest() {
 		});
 	}
 	this.loginUsuario = function (nick, password) {
+		mostrarCargando();
 		$.ajax({
 			type: 'POST',
 			url: '/loginUsuario',
 			data: JSON.stringify({ nick: nick, password: password }),
 			success: function (data) {
+				quitarCargando();
 				if (data.res == "no ok") {
 					mostrarAviso("Login incorrecto");
 					console.log('No se ha podido loguear');
@@ -105,7 +117,7 @@ function ClienteRest() {
 	};
 	this.actualizarUsuario = function (oldpass, newpass) {
 		var usr = JSON.parse($.cookie("usr"));
-		console.log("old:",oldpass," new:",newpass)
+		console.log("old:", oldpass, " new:", newpass)
 		console.log(usr);
 		$.ajax({
 			type: 'PUT',
@@ -120,6 +132,29 @@ function ClienteRest() {
 					$.cookie("usr", JSON.stringify(data));
 					console.log("Actualización correcta")
 					mostrarUsuario(data);
+				}
+
+			},
+			contentType: 'application/json',
+			dataType: 'json'
+		});
+	};
+
+	this.actualizarDatosUsuario = function (nick, email) {
+		var usr = JSON.parse($.cookie("usr"));
+		usr.email = email;
+		$.ajax({
+			type: 'PUT',
+			url: '/actualizarDatosUsuario',
+			data: JSON.stringify(usr),
+			success: function (data) {
+				if (data.res == "no ok") {
+					mostrarAviso("Error al modificar los datos")
+				}
+				else {
+					$.cookie("usr", JSON.stringify(data));
+					console.log("Actualización correcta")
+					mostrarCuentaUsuario();
 				}
 
 			},
@@ -147,6 +182,12 @@ function ClienteRest() {
 		});
 	}
 
-
+	this.obtenerStatsPartidas = function (nick) {
+		mostrarCargando();
+		$.getJSON("/obtenerStatsPartidas/" + nick, function (stats) {
+			mostrarPartidasGanadas(stats);
+			quitarCargando();
+		});
+	}
 
 }

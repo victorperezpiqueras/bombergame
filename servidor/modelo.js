@@ -215,6 +215,35 @@ function Juego() {
 			});
 		});
 	};
+	this.actualizarDatosUsuario = function (newUser, callback) {//////////////////////////////////////////////
+		var juego = this;
+		console.log("new:", newUser)
+		this.dao.connect(function (db) {
+			juego.dao.modificarColeccionUsuarios(newUser, function (usuario) {
+				console.log("Usuario modificado");
+				juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(newUser._id) }, function (usr) {
+					if (usr) {
+						console.log("modificado", usr)
+
+						callback(usr);//usr
+					}
+					else {
+						callback({ "res": "no ok" });
+					}
+					db.close();
+				});
+			});
+
+		});
+		/* this.dao.connect(function (db) {
+			juego.dao.modificarColeccionResultados(newUser, function (usuario) {
+				console.log("Usuario modificado");
+				callback(usuario);//usr
+			});
+			db.close();
+		}); */
+
+	};
 	this.eliminarUsuario = function (uid, callback) {
 		var juego = this;
 		var json = { 'resultados': -1 };
@@ -233,6 +262,46 @@ function Juego() {
 		});
 	}
 
+	this.statsPartidas = function (nick, callback) {
+		var juego = this;
+		var partidasJugadas = 0;
+		var partidasGanadas = 0;
+
+		this.dao.connect(function (db) {
+			juego.dao.obtenerResultados(function (resultados) {
+				for (var res of resultados) {
+					for (var jug of res.jugadores) {
+						if (jug == nick) {
+							partidasJugadas++;
+						}
+					}
+					if (res.nickGanador == nick) partidasGanadas++;
+				}
+				callback({
+					partidasJugadas: partidasJugadas, partidasGanadas: partidasGanadas,
+					ratio: ((partidasGanadas / partidasJugadas * 100).toFixed(2).toString() + '%')
+				});
+			});
+			db.close();
+		});
+	};
+
+	this.actualizarPartidasJugador = function (oldNick, newNick) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerResultados(function (resultados) {
+				for (var res of resultados) {
+					if (res.nickGanador == oldNick) res.nickGanador = newNick;
+					for (var j of res.jugadores) {
+						if (j == oldNick) j = newNick;
+					}
+					var newResultado = new Resultado(res.nickGanador, res.nombre, res.nivel, res.jugadores);
+					juego.dao.insertarResultado(newResultado, function () { console.log("Resultado actualizado:") });
+				}
+			});
+			db.close();
+		});
+	}
 
 }
 
@@ -420,6 +489,9 @@ function Usuario(nick/* , id */) {
 	this.ini = function () {
 		this.estado = "no preparado";
 		this.vidas = 3;
+	}
+	this.actualizar = function (nick) {
+		this.nick = nick;
 	}
 }
 
