@@ -75,24 +75,34 @@ function ClienteRest() {
 	}
 	this.registrarUsuario = function (nick, email, emailr, password) {
 		mostrarCargando();
-		$.ajax({
-			type: 'POST',
-			url: '/registrarUsuario',
-			data: JSON.stringify({ nick: nick, email: email, emailr: emailr, password: password }),
-			success: function (data) {
-				quitarCargando();
-				if (data.res == "no ok") {
-					mostrarAviso("Registro incorrecto");
-					console.log('No se ha podido registrar');
-				}
-				else {
-					console.log("Usuario registrado");
-					mostrarLoginUsuario();
-				}
-			},
-			contentType: 'application/json',
-			dataType: 'json'
-		});
+		if (!nick || !email || !emailr || !password) {
+			quitarCargando();
+			mostrarAviso("Rellena todos los campos");
+		}
+		else if(email!=emailr){
+			quitarCargando();
+			mostrarAviso("Los correos deben coincidir");
+		}
+		else {
+			$.ajax({
+				type: 'POST',
+				url: '/registrarUsuario',
+				data: JSON.stringify({ nick: nick, email: email, emailr: emailr, password: password }),
+				success: function (data) {
+					quitarCargando();
+					if (data.res == "no ok") {
+						mostrarAviso("Ya existe un usuario con ese correo o ese nick");
+						console.log('No se ha podido registrar');
+					}
+					else {
+						console.log("Usuario registrado");
+						mostrarLoginUsuario();
+					}
+				},
+				contentType: 'application/json',
+				dataType: 'json'
+			});
+		}
 	}
 	this.loginUsuario = function (nick, password) {
 		mostrarCargando();

@@ -1,8 +1,9 @@
-<div id='mCP'>
-    <h3 class='titles'>Bienvenido</h3>
-    <p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar
+<div id='mCP' class="shadow p-4 mb-4 bg-white rounded animated bounceInUp">
+    <h3 id="crearPartida-bienvenido" class='titles'>Bienvenido</h3>
+    <!-- <p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar
             sesión</button></p>
-    <br>
+    <br> -->
+    <hr>
     <div class='row'>
         <div class='col-sm-8'>
             <h3 class='titles'>Crear Partida</h3>
@@ -18,10 +19,13 @@
     </div>
 
     <script>
+        var user = JSON.parse($.cookie("usr"));
+        $('#crearPartida-bienvenido').text("Bienvenido "+user.nick);
+
         $('#crearPartidaBtn').on('click', function () {
             var nombre = $('#nombrePartida').val();
             if (nombre == "") {
-                nombre = "SinNombre";
+                nombre = "Partida_Sin_Nombre";
             }
             //rest.crearPartida(nombre,nick);
             ws.crearPartida(nombre);

@@ -13,9 +13,7 @@ function comprobarUsuario() {
 function mostrarInicio() {
 	clear();
 	if ($.cookie("usr")) {
-		$(document).ready(function () {
-			$('#inicio').load('perfil/perfil.html');
-		});
+		mostrarCrearPartida();
 	}
 	else {
 		mostrarAviso("Debes iniciar sesión");
@@ -24,13 +22,16 @@ function mostrarInicio() {
 }
 
 function mostrarTutorial() {
-	clear()
+	clear();
+	generarMensaje();
+	mostrarNavLogged();
 	$(document).ready(function () {
 		$('#inicio').load('tutorial/tutorial.html');
 	});
 }
 function mostrarRegistrarUsuario() {
 	clear();
+	generarMensaje();
 	mostrarNavDefault();
 	$(document).ready(function () {
 		$('#inicio').load('login/registro.html');
@@ -38,14 +39,16 @@ function mostrarRegistrarUsuario() {
 }
 function mostrarLoginUsuario() {
 	clear();
+	generarMensaje();
 	mostrarNavDefault();
 	$(document).ready(function () {
 		$('#inicio').load('login/login.html');
 	});
-
 }
 function mostrarCuentaUsuario() {
 	clear();
+	generarMensaje();
+	mostrarNavLogged();
 	$(document).ready(function () {
 		$('#inicio').load('perfil/perfil.html');
 	});
@@ -91,18 +94,20 @@ function mostrarUsuario(data) {
 	ws = new ClienteWS(data.nick);
 	ws.ini();
 	nick = data.nick;
-	mostrarNavLogged();
 	mostrarCrearPartida(data.nick);
 }
 
 function mostrarAviso(msg) {
-	alert(msg);
-	$('#nombre').val("Usa otro nick");
+	/* alert(msg);
+	$('#nombre').val("Usa otro nick"); */
+	$.alert(msg, "Error");
 }
 
 function mostrarCrearPartida(nick) {
 	clear();
-	var nick = JSON.parse($.cookie("usr")).nick;
+	generarMensaje();
+	mostrarNavLogged();
+	/* var nick = JSON.parse($.cookie("usr")).nick;
 	var cadena = "<div id='mCP'>";
 	cadena = cadena + "<h3 class='titles'>Bienvenido " + nick + "</h3>";
 	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
@@ -128,8 +133,10 @@ function mostrarCrearPartida(nick) {
 	$('#unirseAPartidaBtn').on('click', function () {
 		//rest.obtenerPartidas();
 		ws.obtenerPartidas();
+	}); */
+	$(document).ready(function () {
+		$('#inicio').load('perfil/crearPartida.html');
 	});
-
 }
 
 function mostrarPartida(data) {
@@ -146,9 +153,9 @@ function mostrarListaPartidas(data) {
 	clear();
 	var numeroPartidas = Object.keys(data).length;
 	var cadena = "<div id='mLP'>";
-	cadena = cadena + "<h3>Lista de partidas</h3>";
+	cadena = cadena + "<h3>Lista de partidas</h3><hr>";
 	//cadena=cadena+'<ul class="list-group">';
-	cadena = cadena + '<table class="table"><thead><tr>';
+	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
 	cadena = cadena + '<th scope="col">Nombre</th><th scope="col">Número jugadores</th><th>Unirse</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
@@ -159,15 +166,16 @@ function mostrarListaPartidas(data) {
 		cadena = cadena + '<td><button type="button" id="unirmeAPartidaBtn" class="btn login50-form-btn btn-md" onclick="ws.unirAPartida(\'' + data[key].idp + '\',\'' + nick + '\')">Unirse a partida</button></td>';
 		cadena = cadena + '</tr>';
 	};
-	cadena = cadena + "</tbody></table></div>";
+	cadena = cadena + "</tbody></table>";
+	cadena = cadena + "<button type='button' id='salirBtn' class='btn login50-form-btn btn-md animated bounceInUp' onclick='mostrarCrearPartida()'>Volver</button></div>";
 	$('#inicio').append(cadena);
 }
 
 function mostrarListaJugadores(jugadores) {
 	$('#mLJ').remove();
 	var cadena = "<div id='mLJ'>";
-	cadena = cadena + "<h3>Lista de jugadores</h3>";
-	cadena = cadena + '<table class="table"><thead><tr>';
+	cadena = cadena + "<h3>Lista de jugadores</h3><hr>";
+	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
 	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Otros</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
@@ -184,11 +192,12 @@ function mostrarListaJugadores(jugadores) {
 
 function mostrarResultados(data) {
 	clear();
+	generarMensaje();
 	var numeroPartidas = Object.keys(data).length;
 	var cadena = "<div id='mLR'>";
 	cadena = cadena + "<h3>RESULTADOS</h3><hr>";
 	//cadena=cadena+'<ul class="list-group">';
-	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white"><thead class="thead-dark"><tr>';
+	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white animated bounceInDown"><thead class="thead-dark"><tr>';
 	cadena = cadena + '<th scope="col">Partida</th><th scope="col">Ganador</th><th>Nivel</th><th>Jugadores</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
@@ -241,6 +250,7 @@ function clear() {
 
 function mostrarCargando() {
 	var cadena = '<div id="loading" class="spinner-border text-secondary loading text-center" role="status">';
+	//var cadena='<img src="../assets/images/bombload.gif"/>'
 	cadena = cadena + '<span class="sr-only">Loading...</span></div>';
 	$('#main-container').append(cadena);
 }
