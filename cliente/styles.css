@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 .titles {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: #2c2c2c;
@@ -33,6 +37,44 @@
     left: 50%;
 }
 
+.contadorVidas {
+    height: 70px;
+    width: auto;
+    /* padding: 10px; */
+    margin-bottom: 10px;
+    /* margin-left: 20%; */
+}
+
+table.dataTable thead .sorting:after, table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc_disabled:after, table.dataTable thead .sorting_desc_disabled:before {
+    bottom: .5em;
+}
+
+.login50-form-btn1 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+    /* align-items: left; */
+    /* 
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+    padding: 0 20px;
+    width: 200px;
+    height: 50px;
+    background-color: #827ffe;
+    border-radius: 3px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+}
+
 .div-cuenta {
     margin-left: 3%;
     margin-right: 3%;
@@ -45,10 +87,10 @@
 
 /* SOCIAL MEDIA ICONS */
 
- .fa-social {
+.fa-social {
     border-radius: 50%;
     padding: 10px;
-} 
+}
 
 .fa-social:hover {
     opacity: 0.7;
@@ -67,4 +109,4 @@
 .fa-youtube {
     background: #bb0000;
     color: white;
-  }
+}

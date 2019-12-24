@@ -24,6 +24,9 @@ function Dao() {
     /* this.modificarColeccionResultados = function (res, callback) {
         modificarColeccion(this.resultados, res, callback);
     }; */
+    this.eliminarResultado = function (id, callback) {
+        eliminar(this.resultados, { _id: ObjectID(id) }, callback);
+    };
 
     /* USUARIOS */
     this.insertarUsuario = function (usr, callback) {

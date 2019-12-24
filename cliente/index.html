@@ -20,16 +20,20 @@
 
   <link rel="icon" href="/assets/images/logo.png">
 
+  <!-- JQUERY LIBS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
   <script src="lib/phaser.js"></script>
+  <!-- CODIGO -->
   <script src="src/clienteRest.js"></script>
   <script src="src/clienteWS.js"></script>
   <script src="src/controlWeb.js"></script>
-
+  <!-- PHASER GAME -->
   <script src="js/Utils.js"></script>
   <script src="js/states/BootState.js"></script>
   <script src="js/states/LoadingState.js"></script>
@@ -71,6 +75,8 @@
   <script src="login/login.js"></script>
   <script src="utils/alert.js"></script>
   <script src="utils/messageGenerator.js"></script>
+  <script type="text/javascript" src="utils/datatables.min.js"></script>
+  <link href="utils/datatables.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -103,7 +109,7 @@
   <br>
   <div class="container" id="main-container">
     <br>
-    <header>
+    <header id="header">
       <div class="jumbotron rounded-0 text-dark headerp" style="background-color: #e4e4e4;font-weight: bold;">
         <div class="container">
           <div class="row">

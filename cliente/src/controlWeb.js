@@ -1,5 +1,6 @@
 
 var nick;
+var inGame = false;
 
 function comprobarUsuario() {
 	if ($.cookie("usr")) {
@@ -23,6 +24,7 @@ function mostrarInicio() {
 
 function mostrarTutorial() {
 	clear();
+	checkInGame();
 	generarMensaje();
 	mostrarNavLogged();
 	$(document).ready(function () {
@@ -47,6 +49,7 @@ function mostrarLoginUsuario() {
 }
 function mostrarCuentaUsuario() {
 	clear();
+	checkInGame();
 	generarMensaje();
 	mostrarNavLogged();
 	$(document).ready(function () {
@@ -105,48 +108,44 @@ function mostrarAviso(msg) {
 
 function mostrarCrearPartida(nick) {
 	clear();
+	checkInGame();
 	generarMensaje();
 	mostrarNavLogged();
-	/* var nick = JSON.parse($.cookie("usr")).nick;
-	var cadena = "<div id='mCP'>";
-	cadena = cadena + "<h3 class='titles'>Bienvenido " + nick + "</h3>";
-	cadena = cadena + '<p><button type="button" id="cerrarSesion" class="btn btn-md login50-form-btn" onclick="rest.cerrarSesion()">Cerrar sesión</button></p>';
-	cadena = cadena + '<br>';
-	cadena = cadena + "<div class='row'><div class='col-sm-8'>";
-	cadena = cadena + "<h3 class='titles'>Crear Partida</h3>";
-	cadena = cadena + '<input id="nombrePartida" type="text" class="form-control" name="nombrePartida" placeholder="Nombre partida">';
-	cadena = cadena + '<br>';
-	cadena = cadena + '<button type="button" id="crearPartidaBtn" class="btn  btn-md login50-form-btn">Crear partida</button>';
-	cadena = cadena + "</div><div class='col-sm-4'><h3 class='titles'>Unirse</h3>";
-	cadena = cadena + '<button type="button" id="unirseAPartidaBtn" class="btn  btn-md login50-form-btn">Unirse a partida</button>';
-	cadena = cadena + "</div></div>";
-
-	$('#inicio').append(cadena);
-	$('#crearPartidaBtn').on('click', function () {
-		var nombre = $('#nombrePartida').val();
-		if (nombre == "") {
-			nombre = "SinNombre";
-		}
-		//rest.crearPartida(nombre,nick);
-		ws.crearPartida(nombre);
-	});
-	$('#unirseAPartidaBtn').on('click', function () {
-		//rest.obtenerPartidas();
-		ws.obtenerPartidas();
-	}); */
 	$(document).ready(function () {
-		$('#inicio').load('perfil/crearPartida.html');
+		$('#inicio').load('partida/crearPartida.html');
 	});
 }
 
 function mostrarPartida(data) {
 	clear();
 	var cadena = "<div id='mP'>";
-	cadena = cadena + "<h3>Bienvenido a la partida: " + data.nombre + "</h3>";
-	cadena = cadena + '<div class="row">';
-	cadena = cadena + '<p><button type="button" id="preparadoBtn" class="btn login50-form-btn btn-md" onclick="ws.preparado()"">Preparado</button><br> ';
-	cadena = cadena + ' <button type="button" id="salirBtn" class="btn login50-form-btn btn-md" onclick="ws.salir()"">Salir</button></p><br></div></div>';
+	cadena = cadena + "<h3>Bienvenido a la partida: " + data.nombre + "</h3><hr>";
+	cadena = cadena + '<div class="col-12 col-sm-6 col-md-6 inline" id="in-partida-div">';
+	cadena = cadena + '<button type="button" id="preparadoBtn" class="btn btn-md inline login50-form-btn1" onclick="ws.preparado()"">PREPARADO</button>&nbsp;';
+	cadena = cadena + ' <button type="button" id="salirBtn" class="btn btn-md inline login50-form-btn1" onclick="ws.salir()"">SALIR</button><br><br></div></div><hr>';
 	$('#inicio').append(cadena);
+	/* $(document).ready(function () {
+		$('#inicio').load('partida/mostrarPartida.html');
+	}); */
+}
+
+function mostrarListaJugadores(jugadores) {
+	$('#mLJ').remove();
+	var cadena = "<div id='mLJ'>";
+	cadena = cadena + "<h3>Lista de jugadores</h3><hr>";
+	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
+	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Otros</th>';
+	cadena = cadena + '</tr></thead>';
+	cadena = cadena + '<tbody>';
+	for (var key in jugadores) {
+		cadena = cadena + '<tr>'
+		cadena = cadena + '<td>' + jugadores[key].nick + '</td>';
+		cadena = cadena + '<td>-</td>';
+		cadena = cadena + '<td>' + jugadores[key].estado + '</td>';
+		cadena = cadena + '</tr>';
+	};
+	cadena = cadena + "</tbody></table></div>";
+	$('#mP').append(cadena);
 }
 
 function mostrarListaPartidas(data) {
@@ -171,33 +170,16 @@ function mostrarListaPartidas(data) {
 	$('#inicio').append(cadena);
 }
 
-function mostrarListaJugadores(jugadores) {
-	$('#mLJ').remove();
-	var cadena = "<div id='mLJ'>";
-	cadena = cadena + "<h3>Lista de jugadores</h3><hr>";
-	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
-	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Otros</th>';
-	cadena = cadena + '</tr></thead>';
-	cadena = cadena + '<tbody>';
-	for (var key in jugadores) {
-		cadena = cadena + '<tr>'
-		cadena = cadena + '<td>' + jugadores[key].nick + '</td>';
-		cadena = cadena + '<td>-</td>';
-		cadena = cadena + '<td>' + jugadores[key].estado + '</td>';
-		cadena = cadena + '</tr>';
-	};
-	cadena = cadena + "</tbody></table></div>";
-	$('#mP').append(cadena);
-}
 
 function mostrarResultados(data) {
 	clear();
+	checkInGame();
 	generarMensaje();
 	var numeroPartidas = Object.keys(data).length;
 	var cadena = "<div id='mLR'>";
 	cadena = cadena + "<h3>RESULTADOS</h3><hr>";
 	//cadena=cadena+'<ul class="list-group">';
-	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white animated bounceInDown"><thead class="thead-dark"><tr>';
+	cadena = cadena + '<table id="tabla-resultados" class="table table-striped shadow p-4 mb-4 bg-white animated bounceInDown"><thead class="thead-dark"><tr>';
 	cadena = cadena + '<th scope="col">Partida</th><th scope="col">Ganador</th><th>Nivel</th><th>Jugadores</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
@@ -217,11 +199,27 @@ function mostrarResultados(data) {
 	cadena = cadena + "</tbody></table>";
 	cadena = cadena + "<button type='button' id='salirBtn' class='btn login50-form-btn btn-md' onclick='mostrarCrearPartida()'>Volver</button></div>";
 	$('#inicio').append(cadena);
+
+	/* sorting de la tabla */
+	$(document).ready(function () {
+		$('#tabla-resultados').DataTable({
+			"paging": false,
+			"searching": false,
+			"info": false
+		});
+		$('.dataTables_length').addClass('bs-select');
+	});
 }
 
 function mostrarCanvas(num) {
+	inGame = true;
 	console.log(num);
 	$('#mLJ').remove();
+	//$('#inicio').append("<h1 id='contador-vidas'>Vidas: 3</h1>");
+	$('#inicio').append(/* "<h3 class='d-inline'>Vidas: </h3> */
+	"<img id='contador-vidas' class='contadorVidas d-inline' src='assets/images/3vida.png'/><br>");
+	$('html,body').animate({ scrollTop: 9999 }, 'slow');
+	
 	game = new Phaser.Game(240, 240, Phaser.CANVAS, "juego");
 	game.state.add("BootState", new Bomberman.BootState());
 	game.state.add("LoadingState", new Bomberman.LoadingState());
@@ -229,12 +227,18 @@ function mostrarCanvas(num) {
 
 	game.state.start("BootState", true, false, "assets/levels/level1_" + num + "player.json", "TiledState");
 	console.log("assets/levels/level1_" + num + "player.json");
+
 }
 
 function borrarCanvas() {
+	inGame = false;
 	$('canvas').remove();
+	$('#contador-vidas').remove();
 }
 
+function checkInGame() {
+	if (inGame) ws.salir();
+}
 function clear() {
 	$('#mAU').remove();
 	$('#mLU').remove();
@@ -262,4 +266,9 @@ function mostrarPartidasGanadas(stats) {
 	$('#cuenta-partidas-ganadas').text("Partidas ganadas: " + stats.partidasGanadas);
 	$('#cuenta-partidas-jugadas').text("Partidas jugadas: " + stats.partidasJugadas);
 	$('#cuenta-partidas-ratio').text("Ratio de victoria: " + stats.ratio);
+}
+
+function actualizarVidas(numVidas){
+	$("#contador-vidas").effect( "bounce", {times:3}, 300 );
+	$('#contador-vidas').attr("src","assets/images/"+numVidas+"vida.png");
 }

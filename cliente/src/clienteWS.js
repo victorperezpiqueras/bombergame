@@ -102,9 +102,11 @@ function ClienteWS(nick) {
 			alert("Fin de la partida");
 			cli.salir();
 		});
-		this.socket.on("sigueVivo", function () {
+		this.socket.on("sigueVivo", function (vidas) {
 			console.log("sigue vivo");
+			console.log(vidas)
 			//cli.jugador.volverAInicio();
+			actualizarVidas(vidas);
 			cli.spriteLocal.volverAInicio();
 		});
 		this.socket.on("mover", function (operacion, posicion) {

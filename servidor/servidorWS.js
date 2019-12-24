@@ -73,7 +73,8 @@ function ServidorWS() {
                         juego.anotarResultado(partida, function () { });
                     }
                     else {
-                        cli.enviarRemitente(socket, "sigueVivo"); // ,resultados);
+                        console.log(partida.jugadores[nick].vidas)
+                        cli.enviarRemitente(socket, "sigueVivo", partida.jugadores[nick].vidas); // ,resultados);
                     }
                 })
             });

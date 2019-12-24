@@ -1,0 +1,13 @@
+<div id='mP'>
+    <h3 id="mostrarPartida-bienvenido">Bienvenido a la partida, </h3>
+    <div class="row">
+        <p><button type="button" id="preparadoBtn" class="btn login50-form-btn btn-md" onclick="ws.preparado()">Preparado</button><br>
+            <button type=" button" id="salirBtn" class="btn login50-form-btn btn-md" onclick="ws.salir()">Salir</button>
+        </p>
+        <br>
+    </div>
+</div>
+<script>
+     var user = JSON.parse($.cookie("usr"));
+        $('#mostrarPartida-bienvenido').text("Bienvenido a la partida, "+user.nick);
+</script>

@@ -205,7 +205,7 @@ function Juego() {
 					usr.password = newC;
 					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
 						console.log("Usuario modificado");
-						callback(usuario);//usr
+						callback(usr);//usr
 					});
 				}
 				else {
@@ -219,21 +219,19 @@ function Juego() {
 		var juego = this;
 		console.log("new:", newUser)
 		this.dao.connect(function (db) {
-			juego.dao.modificarColeccionUsuarios(newUser, function (usuario) {
-				console.log("Usuario modificado");
-				juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(newUser._id) }, function (usr) {
-					if (usr) {
-						console.log("modificado", usr)
-
+			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(newUser._id)}, function (usr) {
+				if (usr) {
+					usr.email = newUser.email;
+					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+						console.log("Usuario modificado");
 						callback(usr);//usr
-					}
-					else {
-						callback({ "res": "no ok" });
-					}
-					db.close();
-				});
+					});
+				}
+				else {
+					callback({ "res": "no ok" });
+				}
+				db.close();
 			});
-
 		});
 		/* this.dao.connect(function (db) {
 			juego.dao.modificarColeccionResultados(newUser, function (usuario) {
@@ -259,6 +257,13 @@ function Juego() {
 				}
 				db.close();
 			});
+		});
+	}
+	this.obtenerUsuarioNick = function (nick, callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuariosCriterio({ nick: nick }, callback);
+			db.close();
 		});
 	}
 

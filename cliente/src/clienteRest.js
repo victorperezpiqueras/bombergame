@@ -79,7 +79,7 @@ function ClienteRest() {
 			quitarCargando();
 			mostrarAviso("Rellena todos los campos");
 		}
-		else if(email!=emailr){
+		else if (email != emailr) {
 			quitarCargando();
 			mostrarAviso("Los correos deben coincidir");
 		}
@@ -113,7 +113,7 @@ function ClienteRest() {
 			success: function (data) {
 				quitarCargando();
 				if (data.res == "no ok") {
-					mostrarAviso("Login incorrecto");
+					mostrarAviso("Usuario o contraseña no coinciden");
 					console.log('No se ha podido loguear');
 				}
 				else {
