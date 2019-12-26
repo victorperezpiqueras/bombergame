@@ -217,12 +217,12 @@ function mostrarCanvas(num) {
 	$('#mLJ').remove();
 	//$('#inicio').append("<h1 id='contador-vidas'>Vidas: 3</h1>");
 	$('#inicio').append(/* "<h3 class='d-inline'>Vidas: </h3> */
-	"<img id='contador-vidas' class='contadorVidas' src='assets/images/3vida.png'/><br>");
+		"<img id='contador-vidas' class='contadorVidas' src='assets/images/3vida.png'/><br>");
 	$('html,body').animate({ scrollTop: 9999 }, 'slow');
-	
+
 	game = new Phaser.Game(240, 240, Phaser.CANVAS, "juego");
 	game.state.add("BootState", new Bomberman.BootState());
-	var skin = "assets/images/old/player_spritesheet.png";
+	var skin = JSON.parse($.cookie("usr")).personajeSeleccionado;
 	game.state.add("LoadingState", new Bomberman.LoadingState(skin));
 	game.state.add("TiledState", new Bomberman.TiledState());
 
@@ -270,17 +270,79 @@ function mostrarPartidasGanadas(stats) {
 	$('#cuenta-partidas-ratio').text("Ratio de victoria: " + stats.ratio);
 }
 
-function actualizarVidas(numVidas){
-	$("#contador-vidas").effect( "bounce", {times:3}, 300 );
-	$('#contador-vidas').attr("src","assets/images/"+numVidas+"vida.png");
+function actualizarVidas(numVidas) {
+	$("#contador-vidas").effect("bounce", { times: 3 }, 300);
+	$('#contador-vidas').attr("src", "assets/images/" + numVidas + "vida.png");
 }
 
-function mostrarTienda(){
+function mostrarTienda() {
 	clear();
 	checkInGame();
 	generarMensaje();
 	mostrarNavLogged();
 	$(document).ready(function () {
-		$('#inicio').load('tienda/tienda.html');
+		$('#inicio').load('tienda/tienda.html', function(){
+			cargarPersonajeSeleccionado();
+		});
 	});
+}
+function cargarPersonajeSeleccionado() {
+	var user = JSON.parse($.cookie("usr"));
+	var imagen = document.getElementById("imagen-personaje-seleccionado");
+	imagen.src = "assets/images/personajes/" + user.personajeSeleccionado + ".png";
+	//$("#imagen-personaje-seleccionado").effect("bounce", { times: 3 }, 300);
+}
+
+function mostrarPersonajes(data) {
+	var index = 0;
+	var cadena = "";
+	for (var pers of data) {
+		cadena = cadena + '<div class="col-xl-6 col-lg-8 col-md-12 col-24">';
+		cadena = cadena + '<div class="card text-black bg-light mb-3 shadow p-4 rounded">';
+		cadena = cadena + '<img id="personaje" class="card-img-top border border-dark personaje-imagen"';
+		//console.log('<img class="card-img-top border border-dark" src='+pers.imagen+'')
+		cadena = cadena + 'alt="Card image cap" style="padding: 10px;">';
+		cadena = cadena + '<div class="card-body">';
+		cadena = cadena + '<h4 class="card-title">' + pers.nombre + '</h4>';
+		cadena = cadena + '<div class="card-price">';
+		cadena = cadena + '<div class="row justify-content-end">';
+		cadena = cadena + '<h4>' + pers.precio + '&nbsp;</h4>';
+		cadena = cadena + '<img src="/assets/images/logo.png" width="30" height="33"></img>&nbsp;&nbsp;';
+		cadena = cadena + '<br>';
+
+		var owned = false;
+		var user = JSON.parse($.cookie("usr"))
+		for (var persOwned of user.personajes) {
+			if (persOwned == pers.nombre) owned = true;
+		}
+		if (owned) {
+			cadena = cadena + '<button onclick="rest.seleccionarPersonaje(\'' + pers.nombre + '\')"';
+			//cadena = cadena + 'type="button" class="btn btn-md inline btn-success float-left">Usar</button> &nbsp;';
+			cadena = cadena + 'type="button" class="btn btn-md inline login50-form-btn1-usar">Usar</button> &nbsp;';
+		}
+		else {
+			/* cadena = cadena + '<button onclick="rest.seleccionarPersonaje(\'' + pers.nombre + '\')"';
+			cadena = cadena + 'type="button" class="btn btn-success inline float-left" disabled>Usar</button> &nbsp;'; */
+			cadena = cadena + '<button onclick="rest.comprarPersonaje(\'' + pers.nombre + '\')"';
+			cadena = cadena + 'type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>';
+		}
+		
+		/* cadena = cadena + '<button onclick="rest.comprarPersonaje(\'' + pers.nombre + '\')"';
+		cadena = cadena + 'type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>'; */
+		cadena = cadena + '</div>';
+
+		cadena = cadena + '</div>';
+
+		cadena = cadena + '</div>';
+		cadena = cadena + '</div>';
+		cadena = cadena + '</div>';
+		/* index++;
+		$(function(){
+			$('#personaje'+index+'').attr('src', pers.imagen);
+		  }); */
+	}
+	$('#lista-personajes').append(cadena);
+	var abcElements = document.querySelectorAll('.personaje-imagen');
+	for (var i = 0; i < abcElements.length; i++)
+		abcElements[i].src = data[i].imagen;
 }

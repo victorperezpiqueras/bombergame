@@ -1,15 +1,16 @@
 var mongo = require("mongodb").MongoClient;
 var ObjectID = require("mongodb").ObjectID;
- 
+
 const dotenv = require('dotenv');
 dotenv.config();
 
-const mongoUser=process.env.mongoUser;
-const mongoPass=process.env.mongoPass;
- 
+const mongoUser = process.env.mongoUser;
+const mongoPass = process.env.mongoPass;
+
 function Dao() {
     this.resultados = undefined;
     this.usuarios = undefined;
+    this.personajes = undefined;
 
     /* RESULTADOS */
     this.insertarResultado = function (res, callback) {
@@ -45,6 +46,17 @@ function Dao() {
         eliminar(this.usuarios, { _id: ObjectID(uid) }, callback);
     };
 
+    /* PERSONAJES */
+    this.insertarPersonaje = function (per, callback) {
+        insertar(this.personajes, per, callback);
+    };
+    this.obtenerPersonajes = function (callback) {
+        obtenerTodos(this.personajes, callback);
+    };
+    this.obtenerPersonajeCriterio = function (criterio, callback) {
+        obtener(this.personajes, criterio, callback);
+    };
+
 
     /* HELPERS */
     function insertar(coleccion, elemento, callback) {
@@ -60,7 +72,8 @@ function Dao() {
     };
     function obtener(coleccion, criterio, callback) {
         coleccion.find(criterio).toArray(function (error, usr) {
-            if (usr.length == 0) {
+            if (usr == null) callback(undefined);
+            else if (usr.length == 0) {
                 callback(undefined);
             }
             else {
@@ -96,7 +109,7 @@ function Dao() {
     /* CONNECTION */
     this.connect = function (callback) {
         var dao = this;
-        mongo.connect("mongodb+srv://"+mongoUser+":"+mongoPass+"@clustergame-safci.mongodb.net/bombergame?retryWrites=true&w=majority",
+        mongo.connect("mongodb+srv://" + mongoUser + ":" + mongoPass + "@clustergame-safci.mongodb.net/bombergame?retryWrites=true&w=majority",
             { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
                 if (err) {
                     console.log("No se pudo conectar a la base de datos");
@@ -121,11 +134,20 @@ function Dao() {
                             dao.usuarios = col;
                         }
                     });
+                    database.db("bombergame").collection("personajes", function (err, col) {
+                        if (err) {
+                            console.log("No pude obtener la coleccion")
+                        }
+                        else {
+                            console.log("Tenemos la colección personajes");
+                            dao.personajes = col;
+                        }
+                    });
                     callback(database);
                 }
             })
     }
-   // this.connect();
+    // this.connect();
 
 
 }

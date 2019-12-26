@@ -41,9 +41,12 @@ function Juego() {
 		}
 	}
 	this.obtenerUsuarios = function (callback) {
-		//callback(this.usuarios);
-		console.log("obtener usuarios")
-		this.dao.obtenerUsuarios(callback);
+		console.log("obtener usuarios");
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuarios(callback);
+			db.close();
+		});
 	}
 	this.obtenerPartidas = function (callback) {
 		callback(this.partidas);
@@ -154,7 +157,10 @@ function Juego() {
 			juego.dao.obtenerUsuariosCriterio({ $or: [{ nick: user.nick }, { email: user.email }] }, function (usuarios) {
 				if (!usuarios) {
 					user.password = cifrado.encrypt(user.password);
-					console.log("Modelo-usuario:", user)
+					user.personajes = ["Default"];
+					user.personajeSeleccionado = "Default";
+					user.dinero = 0;
+					console.log("Modelo-usuario:", user);
 					juego.dao.insertarUsuario(user, function (user) {
 						console.log("creado usuario")
 						//callback({ "res": "ok" });
@@ -180,7 +186,7 @@ function Juego() {
 								console.log("uipass:", user.password) */
 					/* 		if (dpassword == user.password) {
 								console.log("match pass"); */
-					juego.agregarUsuario(usuario.nick, function () { })
+					juego.agregarUsuario(usuario.nick, function () { });
 					callback(usuario);//ARREGLAR
 					/* }
 					else callback({ "res": "no ok" }); */
@@ -219,7 +225,7 @@ function Juego() {
 		var juego = this;
 		console.log("new:", newUser)
 		this.dao.connect(function (db) {
-			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(newUser._id)}, function (usr) {
+			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(newUser._id) }, function (usr) {
 				if (usr) {
 					usr.email = newUser.email;
 					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
@@ -271,7 +277,6 @@ function Juego() {
 		var juego = this;
 		var partidasJugadas = 0;
 		var partidasGanadas = 0;
-
 		this.dao.connect(function (db) {
 			juego.dao.obtenerResultados(function (resultados) {
 				for (var res of resultados) {
@@ -305,6 +310,118 @@ function Juego() {
 				}
 			});
 			db.close();
+		});
+	}
+
+	this.obtenerPersonajes = function (callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerPersonajes(function (pers) {
+				console.log("obtenidos personajes")
+				callback(pers);
+			});
+			db.close();
+		});
+	};
+
+	this.generarPersonajes = function (callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			console.log("no hay personajes")
+			personaje = new Personaje("Default", "assets/images/personajes/Default.png", 0);
+			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado default") });
+			personaje = new Personaje("Enemigo", "assets/images/personajes/Enemigo.png", 100);
+			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado enemigo") });
+			personaje = new Personaje("Orco", "assets/images/personajes/Orco.png", 300);
+			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado orco") });
+			personaje = new Personaje("Shrek", "assets/images/personajes/Shrek.png", 1000);
+			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado shrek") });
+			personaje = new Personaje("Mago", "assets/images/personajes/Mago.png", 500);
+			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado mago") });
+			
+			callback(personaje)
+			db.close();
+		});
+	};
+
+	this.comprarPersonaje = function (user, personaje, callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerPersonajeCriterio({ nombre: personaje }, function (pers) {
+				if (pers == null) {
+					console.log("in", personaje)
+					callback({ "res": "no personaje" });
+					db.close();
+				}
+				else {
+					console.log("obtener usuario")
+					juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(user._id) }, function (usr) {
+						if (usr) {
+							var comprado = false;
+							console.log(usr);
+							for (var perso of usr.personajes) {
+								if (perso == personaje) {
+									comprado = true;
+								}
+							}
+							if (!comprado) {
+								if (usr.dinero >= pers.precio) {
+
+									usr.personajes.push(pers.nombre);
+									usr.dinero -= pers.precio;
+									juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+										console.log("Usuario modificado");
+										callback(usr);//usr
+									});
+								}
+								else {
+									callback({ "res": "no dinero" });
+								}
+								db.close();
+							}
+							else callback({ "res": "personaje ya comprado" });
+
+						}
+						else {
+							callback({ "res": "no user" });
+							db.close();
+						}
+					});
+				}
+			});
+		});
+	}
+
+	this.seleccionarPersonaje = function (user, personaje, callback) {
+		var juego = this;
+		//personaje="Shrek";
+		this.dao.connect(function (db) {
+			console.log("obtener usuario")
+			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(user._id) }, function (usr) {
+				if (usr) {
+					var comprado = false;
+					console.log(usr);
+					for (var perso of usr.personajes) {
+						if (perso == personaje) {
+							comprado = true;
+						}
+					}
+					if (comprado) {
+						usr.personajeSeleccionado = personaje;
+						juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+							console.log("Usuario modificado");
+							callback(usr);//usr
+						});
+						db.close();
+					}
+					else callback({ "res": "personaje no comprado" });
+
+				}
+				else {
+					callback({ "res": "no user" });
+					db.close();
+				}
+			});
 		});
 	}
 
@@ -498,6 +615,9 @@ function Usuario(nick/* , id */) {
 	this.actualizar = function (nick) {
 		this.nick = nick;
 	}
+	this.personajes = ["Default"];
+	this.personajeSeleccionado = "Default";
+	this.dinero = 0;
 }
 
 function Resultado(nickGanador, nombrePartida, nivel, jugadores) {
@@ -506,6 +626,12 @@ function Resultado(nickGanador, nombrePartida, nivel, jugadores) {
 	this.nivel = nivel;
 	this.jugadores = jugadores;
 
+}
+
+function Personaje(nombre, imagen, precio) {
+	this.nombre = nombre;
+	this.imagen = imagen;
+	this.precio = precio;
 }
 
 module.exports.Juego = Juego;

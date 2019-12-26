@@ -183,7 +183,7 @@ function ClienteRest() {
 				if (data.resultados == 1) {
 					//mostrarLogin();
 					//mostrarNavLogin();
-					alert("Usuario eliminado");
+					mostrarAviso("Usuario eliminado");
 					mostrarLoginUsuario();
 				}
 			},
@@ -197,6 +197,64 @@ function ClienteRest() {
 		$.getJSON("/obtenerStatsPartidas/" + nick, function (stats) {
 			mostrarPartidasGanadas(stats);
 			quitarCargando();
+		});
+	}
+
+	this.obtenerPersonajes = function () {
+		mostrarCargando();
+		var usr = JSON.parse($.cookie("usr"));
+		$.ajax({
+			type: 'GET',
+			url: '/obtenerPersonajes/',
+			data: '{}',
+			success: function (data) {
+				console.log("Personajes ", data)
+				mostrarPersonajes(data);
+				quitarCargando();
+			},
+			contentType: 'application/json',
+			dataType: 'json'
+		});
+	}
+
+	this.comprarPersonaje = function (personaje) {
+		mostrarCargando();
+		var usr = JSON.parse($.cookie("usr"));
+		$.ajax({
+			type: 'POST',
+			url: '/comprarPersonaje/',
+			data: JSON.stringify({ user: usr, personaje: personaje }),
+			success: function (data) {
+				if (data.res == "no dinero") mostrarAviso("No tienes bombs suficientes")
+				else if (data.res == "no personaje") mostrarAviso("Ha habido un error de sesión")
+				else {
+					$.cookie("usr", JSON.stringify(data));
+					console.log("Compra ", data)
+					//rest.obtenerPersonajes();
+					mostrarTienda();
+				}
+				quitarCargando();
+			},
+			contentType: 'application/json',
+			dataType: 'json'
+		});
+	}
+
+	this.seleccionarPersonaje = function (personaje) {
+		mostrarCargando();
+		var usr = JSON.parse($.cookie("usr"));
+		$.ajax({
+			type: 'PUT',
+			url: '/seleccionarPersonaje/',
+			data: JSON.stringify({ user: usr, personaje: personaje }),
+			success: function (data) {
+				$.cookie("usr", JSON.stringify(data));
+				console.log("Seleccionar personaje ", data)
+				cargarPersonajeSeleccionado();
+				quitarCargando();
+			},
+			contentType: 'application/json',
+			dataType: 'json'
 		});
 	}
 

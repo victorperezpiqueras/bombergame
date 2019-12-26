@@ -151,6 +151,34 @@ app.get("/obtenerStatsPartidas/:nick", function (request, response) {
 	})
 });
 
+/* PERSONAJES */
+app.post("/generarPersonajes", function (request, response) {
+	juego.generarPersonajes(function (resultado) {
+		response.send(resultado);
+	})
+});
+
+app.get("/obtenerPersonajes", function (request, response) {
+	juego.obtenerPersonajes(function (resultado) {
+		response.send(resultado);
+	})
+});
+
+app.put("/seleccionarPersonaje", function (request, response) {
+	var user = request.body.user;
+	var personaje = request.body.personaje;
+	juego.seleccionarPersonaje(user, personaje, function (resultado) {
+		response.send(resultado);
+	})
+});
+
+app.post("/comprarPersonaje", function (request, response) {
+	var user = request.body.user;
+	var personaje = request.body.personaje;
+	juego.comprarPersonaje(user, personaje, function (resultado) {
+		response.send(resultado);
+	})
+});
 
 //console.log("Servidor escuchando en "+host+":"+port);
 //app.listen(port,host);
