@@ -75,7 +75,8 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting:before, tab
     -moz-transition: all 0.4s;
     transition: all 0.4s;
 }
-.login50-form-btn1-usar{
+
+.login50-form-btn1-usar {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 16px;
     color: #fff;

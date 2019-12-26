@@ -180,11 +180,12 @@ function mostrarResultados(data) {
 	cadena = cadena + "<h3>RESULTADOS</h3><hr>";
 	//cadena=cadena+'<ul class="list-group">';
 	cadena = cadena + '<table id="tabla-resultados" class="table table-striped shadow p-4 mb-4 bg-white animated bounceInDown"><thead class="thead-dark"><tr>';
-	cadena = cadena + '<th scope="col">Partida</th><th scope="col">Ganador</th><th>Nivel</th><th>Jugadores</th>';
+	cadena = cadena + '<th>Puntuación</th><th>Partida</th><th>Ganador</th><th>Nivel</th><th>Jugadores</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
 	for (var key in data) {
 		cadena = cadena + '<tr>'
+		cadena = cadena + '<td>' + data[key].puntos + '</td>';
 		cadena = cadena + '<td>' + data[key].nombrePartida + '</td>';
 		cadena = cadena + '<td>' + data[key].nickGanador + '</td>';
 		cadena = cadena + '<td>' + data[key].nivel + '</td>';
@@ -203,6 +204,7 @@ function mostrarResultados(data) {
 	/* sorting de la tabla */
 	$(document).ready(function () {
 		$('#tabla-resultados').DataTable({
+			"order": [[ 0, "desc" ]],
 			"paging": false,
 			"searching": false,
 			"info": false
@@ -267,6 +269,7 @@ function quitarCargando() {
 function mostrarPartidasGanadas(stats) {
 	$('#cuenta-partidas-ganadas').text("Partidas ganadas: " + stats.partidasGanadas);
 	$('#cuenta-partidas-jugadas').text("Partidas jugadas: " + stats.partidasJugadas);
+	if (stats.ratio=="NaN%") stats.ratio = "0.00%";
 	$('#cuenta-partidas-ratio').text("Ratio de victoria: " + stats.ratio);
 }
 
@@ -281,7 +284,7 @@ function mostrarTienda() {
 	generarMensaje();
 	mostrarNavLogged();
 	$(document).ready(function () {
-		$('#inicio').load('tienda/tienda.html', function(){
+		$('#inicio').load('tienda/tienda.html', function () {
 			cargarPersonajeSeleccionado();
 		});
 	});
@@ -326,7 +329,7 @@ function mostrarPersonajes(data) {
 			cadena = cadena + '<button onclick="rest.comprarPersonaje(\'' + pers.nombre + '\')"';
 			cadena = cadena + 'type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>';
 		}
-		
+
 		/* cadena = cadena + '<button onclick="rest.comprarPersonaje(\'' + pers.nombre + '\')"';
 		cadena = cadena + 'type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>'; */
 		cadena = cadena + '</div>';

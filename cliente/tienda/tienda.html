@@ -4,77 +4,19 @@
         <br>
         <div class="col-xl-6 col-lg-8 col-md-12 col-24">
             <div class="card text-black bg-light mb-3 shadow p-4 rounded">
-                <img id="imagen-personaje-seleccionado" class="card-img-top border border-dark" src="assets/images/player_spritesheet.png"
-                    alt="Card image cap" style="padding: 10px;">
+                <img id="imagen-personaje-seleccionado" class="card-img-top border border-dark"
+                    src="assets/images/player_spritesheet.png" alt="Card image cap" style="padding: 10px;">
             </div>
         </div>
         <br>
-
-
     </div>
+    <hr>
     <div class="row animated bounceInLeft">
         <h3 id="bombs-user">Bombs: 14</h3>
         <img src="/assets/images/logo.png" width="30" height="33"></img>
     </div>
     <br>
-    <hr>
-    <br>
     <div id="lista-personajes" class="row animated bounceInRight">
-       <!--  <div class="col-xl-6 col-lg-8 col-md-12 col-24">
-            <div class="card text-black bg-light mb-3 shadow p-4 rounded">
-                <img class="card-img-top border border-dark" src="assets/images/player_spritesheet.png"
-                    alt="Card image cap" style="padding: 10px;">
-                <div class="card-body">
-                    <h4 class="card-title">Shrek</h4>
-                    <div class="card-price">
-                        <div class="row justify-content-end">
-                            <h4>20b&nbsp;</h4>
-                            <br>
-                            <button type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-6 col-lg-8 col-md-12 col-24">
-            <div class="card text-black bg-light mb-3 shadow p-4 rounded">
-                <img class="card-img-top border border-dark" src="assets/images/player_spritesheet.png"
-                    alt="Card image cap" style="padding: 10px;">
-                <div class="card-body">
-                    <h4 class="card-title">Shrek</h4>
-                    <div class="card-price">
-                        <div class="row justify-content-end">
-                            <h4>20b&nbsp;</h4>
-                            <br>
-                            <button type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-6 col-lg-8 col-md-12 col-24">
-            <div class="card text-black bg-light mb-3 shadow p-4 rounded">
-                <img class="card-img-top border border-dark" src="assets/images/player_spritesheet.png"
-                    alt="Card image cap" style="padding: 10px;">
-                <div class="card-body">
-                    <h4 class="card-title">Shrek</h4>
-                    <div class="card-price">
-                        <div class="row justify-content-end">
-                            <h4>20b&nbsp;</h4>
-                            <br>
-                            <button type="button" class="btn btn-md inline login50-form-btn1">Comprar</button>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div> -->
-
 
     </div>
 
@@ -84,5 +26,5 @@
     rest.obtenerPersonajes();
     var user = JSON.parse($.cookie("usr"));
     console.log(user)
-    $("#bombs-user").text("Bombs: "+user.dinero);
+    $("#bombs-user").text("Bombs: " + user.dinero);
 </script>

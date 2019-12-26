@@ -145,7 +145,7 @@ function Juego() {
 	this.anotarResultado = function (partida, callback) {
 		var juego = this;
 		this.dao.connect(function (db) {
-			var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores());
+			var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores(), partida.puntos);
 			juego.dao.insertarResultado(resultado, callback);
 			db.close();
 		});
@@ -338,7 +338,7 @@ function Juego() {
 			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado shrek") });
 			personaje = new Personaje("Mago", "assets/images/personajes/Mago.png", 500);
 			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado mago") });
-			
+
 			callback(personaje)
 			db.close();
 		});
@@ -441,6 +441,11 @@ function Partida(nombre, idp) {
 	this.numJugadores = 0;
 	this.numeroEnemigos = 4;
 
+	this.puntos = 0;
+
+	this.tiempoInicio = null;
+	this.tiempoFinal = null;
+
 	this.fase = new Inicial();
 
 	this.agregarJugador = function (usr) {
@@ -524,6 +529,15 @@ function Partida(nombre, idp) {
 			ind++;
 		}
 	}
+	this.contarTiempo = function () {
+		console.log(this.tiempoFinal)
+		console.log(this.tiempoInicio)
+		var puntosTiempo = (this.tiempoFinal.getTime() - this.tiempoInicio.getTime()) / 1000;
+		console.log(puntosTiempo)
+		this.puntos = this.puntos - parseInt(puntosTiempo.toFixed(0));
+		console.log(this.puntos)
+		if (this.puntos < 0) this.puntos = 0;
+	}
 
 }
 
@@ -536,6 +550,7 @@ function Inicial() {
 		partida.jugadores[nick].estado = "preparado";
 		if (partida.todosPreparados()) {
 			partida.fase = new Jugando();
+			partida.tiempoInicio = new Date();
 			partida.setTodosVivos();
 			partida.asignarPosicion();
 		}
@@ -563,6 +578,8 @@ function Jugando() {
 		partida.comprobarJugadores();
 		if (partida.todosMuertos()) {
 			partida.fase = new Final();
+			partida.tiempoFinal = new Date();
+			partida.contarTiempo();
 		}
 		//comprobar que alguien haya ganado
 	}
@@ -570,9 +587,12 @@ function Jugando() {
 		//partida.numeroEnemigos=partida.numeroEnemigos-1;
 		partida.enemigos[enemy] = enemy;
 		console.log("muere enemigo");
+		partida.puntos += 100;
 		if (Object.keys(partida.enemigos).length >= partida.numeroEnemigos) {
 			partida.comprobarGanador();
 			partida.fase = new Final();
+			partida.tiempoFinal = new Date();
+			partida.contarTiempo();
 		}
 	}
 	this.jugadorHerido = function (nick, partida) {
@@ -582,6 +602,8 @@ function Jugando() {
 			partida.comprobarJugadores();
 			if (partida.todosMuertos()) {
 				partida.fase = new Final();
+				partida.tiempoFinal = new Date();
+				partida.contarTiempo();
 			}
 		}
 	}
@@ -620,12 +642,12 @@ function Usuario(nick/* , id */) {
 	this.dinero = 0;
 }
 
-function Resultado(nickGanador, nombrePartida, nivel, jugadores) {
+function Resultado(nickGanador, nombrePartida, nivel, jugadores, puntos) {
 	this.nickGanador = nickGanador;
 	this.nombrePartida = nombrePartida
 	this.nivel = nivel;
 	this.jugadores = jugadores;
-
+	this.puntos = puntos;
 }
 
 function Personaje(nombre, imagen, precio) {
