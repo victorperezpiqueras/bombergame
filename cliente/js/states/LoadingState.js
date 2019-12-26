@@ -1,8 +1,10 @@
 var Bomberman = Bomberman || {};
 
-Bomberman.LoadingState = function () {
+Bomberman.LoadingState = function (skin) {
     "use strict";
     Phaser.State.call(this);
+
+    this.skin = skin;
 };
 
 Bomberman.LoadingState.prototype = Object.create(Phaser.State.prototype);
@@ -22,15 +24,16 @@ Bomberman.LoadingState.prototype.preload = function () {
         if (assets.hasOwnProperty(asset_key)) {
             asset = assets[asset_key];
             switch (asset.type) {
-            case "image":
-                this.load.image(asset_key, asset.source);
-                break;
-            case "spritesheet":
-                this.load.spritesheet(asset_key, asset.source, asset.frame_width, asset.frame_height, asset.frames, asset.margin, asset.spacing);
-                break;
-            case "tilemap":
-                this.load.tilemap(asset_key, asset.source, null, Phaser.Tilemap.TILED_JSON);
-                break;
+                case "image":
+                    this.load.image(asset_key, asset.source);
+                    break;
+                case "spritesheet":
+                    if (asset.source == "assets/images/player_spritesheet.png") { asset.source = this.skin };
+                    this.load.spritesheet(asset_key, asset.source/*  */, asset.frame_width, asset.frame_height, asset.frames, asset.margin, asset.spacing);
+                    break;
+                case "tilemap":
+                    this.load.tilemap(asset_key, asset.source, null, Phaser.Tilemap.TILED_JSON);
+                    break;
             }
         }
     }

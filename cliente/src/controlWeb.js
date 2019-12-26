@@ -217,12 +217,13 @@ function mostrarCanvas(num) {
 	$('#mLJ').remove();
 	//$('#inicio').append("<h1 id='contador-vidas'>Vidas: 3</h1>");
 	$('#inicio').append(/* "<h3 class='d-inline'>Vidas: </h3> */
-	"<img id='contador-vidas' class='contadorVidas d-inline' src='assets/images/3vida.png'/><br>");
+	"<img id='contador-vidas' class='contadorVidas' src='assets/images/3vida.png'/><br>");
 	$('html,body').animate({ scrollTop: 9999 }, 'slow');
 	
 	game = new Phaser.Game(240, 240, Phaser.CANVAS, "juego");
 	game.state.add("BootState", new Bomberman.BootState());
-	game.state.add("LoadingState", new Bomberman.LoadingState());
+	var skin = "assets/images/old/player_spritesheet.png";
+	game.state.add("LoadingState", new Bomberman.LoadingState(skin));
 	game.state.add("TiledState", new Bomberman.TiledState());
 
 	game.state.start("BootState", true, false, "assets/levels/level1_" + num + "player.json", "TiledState");
@@ -250,6 +251,7 @@ function clear() {
 	$('#mLP').remove();
 	$('#mLR').remove();
 	$('#mP').remove();
+	$('#mT').remove();
 }
 
 function mostrarCargando() {
@@ -271,4 +273,14 @@ function mostrarPartidasGanadas(stats) {
 function actualizarVidas(numVidas){
 	$("#contador-vidas").effect( "bounce", {times:3}, 300 );
 	$('#contador-vidas').attr("src","assets/images/"+numVidas+"vida.png");
+}
+
+function mostrarTienda(){
+	clear();
+	checkInGame();
+	generarMensaje();
+	mostrarNavLogged();
+	$(document).ready(function () {
+		$('#inicio').load('tienda/tienda.html');
+	});
 }
