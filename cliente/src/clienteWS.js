@@ -113,6 +113,15 @@ function ClienteWS(nick) {
 			if (cli.spriteRival) {
 				cli.spriteRival.mover(operacion, posicion);
 			}
+		});
+		this.socket.on("aumentoDinero", function (usuario) {
+			console.log("clientews")
+			if (usuario.res == "no ok") {
+				mostrarAviso("Error al obtener monedas");
+			}
+			else {
+				$.cookie("usr", JSON.stringify(usuario));
+			}
 		})
 	}
 }

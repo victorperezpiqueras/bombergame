@@ -45,10 +45,14 @@ function ServidorWS() {
                 });
             });
             socket.on("enviarResultado", function (idp, nick) {
+                console.log("enviar resultado")
                 juego.enviarResultado(idp, nick, function (partida) { //function(resultados) 
                     if (partida && partida.fase.nombre == "final") {
                         cli.enviarATodos(io, idp, "finPartida", {}); //resultados
-                        juego.anotarResultado(partida, function () { });
+                        console.log("serverWS")
+                        juego.anotarResultado(partida, function (usuario) {
+                            cli.enviarRemitente(socket, "aumentoDinero", usuario);
+                        });
                     }
                     else {
                         cli.enviarRemitente(socket, "anotado"); // ,resultados);
@@ -59,7 +63,9 @@ function ServidorWS() {
                 juego.muereEnemigo(idp, nick, enemy, function (partida) {
                     if (partida && partida.fase.nombre == "final") {
                         cli.enviarATodos(io, idp, "finPartida", {}); //resultados
-                        juego.anotarResultado(partida, function () { });
+                        juego.anotarResultado(partida, function (usuario) { 
+                            cli.enviarRemitente(socket, "aumentoDinero", usuario);
+                        });
                     }
                     else {
                         cli.enviarRemitente(socket, "anotado"); // ,resultados);

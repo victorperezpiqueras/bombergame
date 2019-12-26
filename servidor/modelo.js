@@ -143,10 +143,20 @@ function Juego() {
 		});
 	}
 	this.anotarResultado = function (partida, callback) {
+		console.log("juego enviar resultado")
 		var juego = this;
 		this.dao.connect(function (db) {
 			var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores(), partida.puntos);
-			juego.dao.insertarResultado(resultado, callback);
+			juego.dao.insertarResultado(resultado, function () {
+				if (partida.nickGanador != "los bichos") {
+					juego.aumentarDinero(partida.nickGanador, partida.puntos, function (usuario) {
+						callback(usuario);
+					});
+				}
+				else {
+					callback({});
+				}
+			});
 			db.close();
 		});
 
@@ -425,6 +435,25 @@ function Juego() {
 		});
 	}
 
+	this.aumentarDinero = function (nick, puntos, callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerUsuariosCriterio({ nick: nick }, function (usr) {
+				if (usr) {
+					usr.dinero = usr.dinero + puntos;
+					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+						console.log("Usuario aumentado dinero");
+						callback(usr);//usr
+					});
+				}
+				else {
+					callback({ "res": "no ok" });
+				}
+				db.close();
+			});
+		});
+	}
+
 }
 
 function Partida(nombre, idp) {
@@ -530,12 +559,8 @@ function Partida(nombre, idp) {
 		}
 	}
 	this.contarTiempo = function () {
-		console.log(this.tiempoFinal)
-		console.log(this.tiempoInicio)
 		var puntosTiempo = (this.tiempoFinal.getTime() - this.tiempoInicio.getTime()) / 1000;
-		console.log(puntosTiempo)
 		this.puntos = this.puntos - parseInt(puntosTiempo.toFixed(0));
-		console.log(this.puntos)
 		if (this.puntos < 0) this.puntos = 0;
 	}
 
