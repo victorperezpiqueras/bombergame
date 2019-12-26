@@ -142,20 +142,15 @@ function Juego() {
 			db.close();
 		});
 	}
-	this.anotarResultado = function (partida, callback) {
-		console.log("juego enviar resultado")
+	this.anotarResultado = function (partida, nick, callback) {
+		console.log("anotarResultado");
 		var juego = this;
 		this.dao.connect(function (db) {
 			var resultado = new Resultado(partida.nickGanador, partida.nombre, partida.nivel, partida.obtenerNickJugadores(), partida.puntos);
 			juego.dao.insertarResultado(resultado, function () {
-				if (partida.nickGanador != "los bichos") {
-					juego.aumentarDinero(partida.nickGanador, partida.puntos, function (usuario) {
-						callback(usuario);
-					});
-				}
-				else {
-					callback({});
-				}
+				juego.aumentarDinero(nick, partida.puntos, function (usuario) {
+					callback(usuario);
+				});
 			});
 			db.close();
 		});
