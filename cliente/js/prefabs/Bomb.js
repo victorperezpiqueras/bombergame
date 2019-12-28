@@ -14,6 +14,7 @@ Bomberman.Bomb = function (game_state, name, position, properties) {
     this.exploding_animation = this.animations.add("exploding", [0, 2, 4], 1, false);
     this.exploding_animation.onComplete.add(this.kill, this);
     this.animations.play("exploding");
+    
 };
 
 Bomberman.Bomb.prototype = Object.create(Bomberman.Prefab.prototype);
@@ -26,8 +27,9 @@ Bomberman.Bomb.prototype.reset = function (position_x, position_y) {
 };
 
 Bomberman.Bomb.prototype.kill = function () {
-    /* var audio = new Audio('../../assets/audio/Minecraft TNT Sound FX 4.2s - 6.2s (0rRlpg9iSZM) (online-audio-converter.com).mp3');
-    audio.play(); */
+    var audio = new Audio('assets/audio/bomb-sound.mp3');
+    audio.play();
+
     "use strict";
     Phaser.Sprite.prototype.kill.call(this);
     var explosion_name, explosion_position, explosion_properties, explosion;

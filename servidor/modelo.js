@@ -184,20 +184,16 @@ function Juego() {
 		console.log(user);
 		this.dao.connect(function (db) {
 			juego.dao.obtenerUsuariosCriterio({ nick: user.nick, password: cifrado.encrypt(user.password) }, function (usuario) {
+				console.log("-------------------", usuario)
 				if (usuario) {
-					console.log("encontrado usuario")
-					/* 				dpassword = cifrado.decrypt(usuario.password);
-					*/				/* console.log(dpassword)
-								console.log("uipass:", user.password) */
-					/* 		if (dpassword == user.password) {
-								console.log("match pass"); */
+					console.log("encontrado usuario login")
 					juego.agregarUsuario(usuario.nick, function () { });
 					callback(usuario);//ARREGLAR
 					/* }
 					else callback({ "res": "no ok" }); */
 				}
 				else {
-					//console.log(user)
+					console.log("no ok login")
 					callback({ "res": "no ok" });
 				}
 				db.close();
@@ -226,7 +222,7 @@ function Juego() {
 			});
 		});
 	};
-	this.actualizarDatosUsuario = function (newUser, callback) {//////////////////////////////////////////////
+	this.actualizarDatosUsuario = function (newUser, callback) {
 		var juego = this;
 		console.log("new:", newUser)
 		this.dao.connect(function (db) {
@@ -244,14 +240,6 @@ function Juego() {
 				db.close();
 			});
 		});
-		/* this.dao.connect(function (db) {
-			juego.dao.modificarColeccionResultados(newUser, function (usuario) {
-				console.log("Usuario modificado");
-				callback(usuario);//usr
-			});
-			db.close();
-		}); */
-
 	};
 	this.eliminarUsuario = function (uid, callback) {
 		var juego = this;
@@ -264,8 +252,8 @@ function Juego() {
 				else {
 					json = { "resultados": 1 };
 					console.log("Usuario eliminado de usuarios");
-					callback(json);
 				}
+				callback(json);
 				db.close();
 			});
 		});
@@ -301,22 +289,22 @@ function Juego() {
 		});
 	};
 
-	this.actualizarPartidasJugador = function (oldNick, newNick) {
-		var juego = this;
-		this.dao.connect(function (db) {
-			juego.dao.obtenerResultados(function (resultados) {
-				for (var res of resultados) {
-					if (res.nickGanador == oldNick) res.nickGanador = newNick;
-					for (var j of res.jugadores) {
-						if (j == oldNick) j = newNick;
+	/* 	this.actualizarPartidasJugador = function (oldNick, newNick) {
+			var juego = this;
+			this.dao.connect(function (db) {
+				juego.dao.obtenerResultados(function (resultados) {
+					for (var res of resultados) {
+						if (res.nickGanador == oldNick) res.nickGanador = newNick;
+						for (var j of res.jugadores) {
+							if (j == oldNick) j = newNick;
+						}
+						var newResultado = new Resultado(res.nickGanador, res.nombre, res.nivel, res.jugadores);
+						juego.dao.insertarResultado(newResultado, function () { console.log("Resultado actualizado:") });
 					}
-					var newResultado = new Resultado(res.nickGanador, res.nombre, res.nivel, res.jugadores);
-					juego.dao.insertarResultado(newResultado, function () { console.log("Resultado actualizado:") });
-				}
+				});
+				db.close();
 			});
-			db.close();
-		});
-	}
+		} */
 
 	this.obtenerPersonajes = function (callback) {
 		var juego = this;
@@ -324,8 +312,9 @@ function Juego() {
 			juego.dao.obtenerPersonajes(function (pers) {
 				console.log("obtenidos personajes")
 				callback(pers);
+				db.close();
 			});
-			db.close();
+			
 		});
 	};
 
@@ -346,6 +335,24 @@ function Juego() {
 
 			callback(personaje)
 			db.close();
+		});
+	};
+
+	this.eliminarPersonajes = function (callback) {
+		var juego = this;
+		var json = { 'resultados': -1 };
+		this.dao.connect(function (db) {
+			juego.dao.eliminarPersonajes(function (result) {
+				if (result.result.n == 0) {
+					console.log("No se pudo eliminar personajes");
+				}
+				else {
+					json = { "resultados": 1 };
+					console.log("personajes eliminados");
+				}
+				callback(json);
+				db.close();
+			});
 		});
 	};
 
@@ -604,7 +611,6 @@ function Jugando() {
 		//comprobar que alguien haya ganado
 	}
 	this.muereEnemigo = function (nick, enemy, partida) {
-		//partida.numeroEnemigos=partida.numeroEnemigos-1;
 		partida.enemigos[enemy] = enemy;
 		console.log("muere enemigo");
 		partida.puntos += 100;

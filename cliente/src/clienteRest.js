@@ -126,51 +126,62 @@ function ClienteRest() {
 		});
 	};
 	this.actualizarUsuario = function (oldpass, newpass) {
-		var usr = JSON.parse($.cookie("usr"));
-		console.log("old:", oldpass, " new:", newpass)
-		console.log(usr);
-		$.ajax({
-			type: 'PUT',
-			url: '/actualizarUsuario',
-			data: JSON.stringify({ uid: usr._id, oldpass: oldpass, newpass: newpass }),
-			success: function (data) {
-				if (data.res == "no ok") {
-					mostrarAviso("La contraseña no es correcta")
-					//mostrarRegistro();
-				}
-				else {
-					$.cookie("usr", JSON.stringify(data));
-					console.log("Actualización correcta")
-					mostrarUsuario(data);
-				}
+		if (oldpass.indexOf('<') > -1 || newpass.indexOf('<') > -1) {
+			mostrarAviso("Caracter no permitido");
+		}
+		else {
+			var usr = JSON.parse($.cookie("usr"));
+			console.log("old:", oldpass, " new:", newpass)
+			console.log(usr);
+			$.ajax({
+				type: 'PUT',
+				url: '/actualizarUsuario',
+				data: JSON.stringify({ uid: usr._id, oldpass: oldpass, newpass: newpass }),
+				success: function (data) {
+					if (data.res == "no ok") {
+						mostrarAviso("La contraseña no es correcta")
+						//mostrarRegistro();
+					}
+					else {
+						$.cookie("usr", JSON.stringify(data));
+						console.log("Actualización correcta")
+						mostrarUsuario(data);
+					}
 
-			},
-			contentType: 'application/json',
-			dataType: 'json'
-		});
+				},
+				contentType: 'application/json',
+				dataType: 'json'
+			});
+		}
 	};
 
 	this.actualizarDatosUsuario = function (nick, email) {
-		var usr = JSON.parse($.cookie("usr"));
-		usr.email = email;
-		$.ajax({
-			type: 'PUT',
-			url: '/actualizarDatosUsuario',
-			data: JSON.stringify(usr),
-			success: function (data) {
-				if (data.res == "no ok") {
-					mostrarAviso("Error al modificar los datos")
-				}
-				else {
-					$.cookie("usr", JSON.stringify(data));
-					console.log("Actualización correcta")
-					mostrarCuentaUsuario();
-				}
+		if (nick.indexOf('<') > -1 || email.indexOf('<') > -1) {
+			mostrarAviso("Caracter no permitido");
+		}
+		else {
+			var usr = JSON.parse($.cookie("usr"));
+			usr.email = email;
+			$.ajax({
+				type: 'PUT',
+				url: '/actualizarDatosUsuario',
+				data: JSON.stringify(usr),
+				success: function (data) {
+					if (data.res == "no ok") {
+						mostrarAviso("Error al modificar los datos")
+					}
+					else {
+						$.cookie("usr", JSON.stringify(data));
+						console.log("Actualización correcta")
+						mostrarCuentaUsuario();
+					}
 
-			},
-			contentType: 'application/json',
-			dataType: 'json'
-		});
+				},
+				contentType: 'application/json',
+				dataType: 'json'
+			});
+		}
+
 	};
 
 	this.eliminarUsuario = function () {

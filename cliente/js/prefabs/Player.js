@@ -25,8 +25,8 @@ Bomberman.Player = function (game_state, name, position, properties) {
     this.game_state.game.physics.arcade.enable(this);
     this.body.setSize(14, 12, 0, 4);
 
-    this.x=ws.jugador.posicion.x;
-    this.y=ws.jugador.posicion.y;
+    this.x = ws.jugador.posicion.x;
+    this.y = ws.jugador.posicion.y;
 
     this.initial_position = new Phaser.Point(this.x, this.y);
     //this.ant=this.initial_position;
@@ -95,6 +95,10 @@ Bomberman.Player.prototype.update = function () {
     }
 
     if (!this.dropping_bomb && this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+
+        var audio = new Audio('assets/audio/bomb-before-sound.mp3');
+        audio.play();
+
         ws.mover("dropTrue", { x: this.x, y: this.y });
         this.drop_bomb();
         this.dropping_bomb = true;
@@ -117,14 +121,15 @@ Bomberman.Player.prototype.update = function () {
 // }
 
 Bomberman.Player.prototype.kill = function () {
+    var audio = new Audio('assets/audio/death-sound.mp3');
+    audio.play();
     if (this.estado == "vivo") {
         this.estado = "herido";
         this.x = this.initial_position.x;
         this.y = this.initial_position.y;
         ws.jugadorHerido();
     }
-    /*  var audio = new Audio('../../assets/audio/Age of Empires 2 - All Male Death Sounds 3s - 4.1s (DEsB-DNbpS4) (online-audio-converter.com).mp3');
-     audio.play(); */
+
 }
 Bomberman.Player.prototype.killPlayer = function () {
     if (this.estado == "vivo") {

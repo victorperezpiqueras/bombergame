@@ -25,11 +25,14 @@ function mostrarInicio() {
 function mostrarTutorial() {
 	clear();
 	checkInGame();
+	mostrarCargando();
 	generarMensaje();
 	mostrarNavLogged();
 	$(document).ready(function () {
 		$('#inicio').load('tutorial/tutorial.html');
+		quitarCargando();
 	});
+	
 }
 function mostrarRegistrarUsuario() {
 	clear();
@@ -134,13 +137,13 @@ function mostrarListaJugadores(jugadores) {
 	var cadena = "<div id='mLJ'>";
 	cadena = cadena + "<h3>Lista de jugadores</h3><hr>";
 	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
-	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Otros</th>';
+	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Preparado</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
 	for (var key in jugadores) {
 		cadena = cadena + '<tr>'
 		cadena = cadena + '<td>' + jugadores[key].nick + '</td>';
-		cadena = cadena + '<td>-</td>';
+		cadena = cadena + '<td>3</td>';
 		cadena = cadena + '<td>' + jugadores[key].estado + '</td>';
 		cadena = cadena + '</tr>';
 	};

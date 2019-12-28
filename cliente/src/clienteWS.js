@@ -14,7 +14,7 @@ function ClienteWS(nick) {
 	this.crearPartida = function (nombrePartida) {
 		//this.nombrePartida=nombre;
 		if (nombrePartida.indexOf('<') > -1) {
-			alert("Caracter no permitido");
+			mostrarAviso("Caracter no permitido");
 		}
 		else {
 			this.socket.emit('crearPartida', this.nick, nombrePartida);
@@ -115,7 +115,6 @@ function ClienteWS(nick) {
 			}
 		});
 		this.socket.on("aumentoDinero", function (usuario) {
-			console.log("clientews")
 			if (usuario.res == "no ok") {
 				mostrarAviso("Error al obtener monedas");
 			}

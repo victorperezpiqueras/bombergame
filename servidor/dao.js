@@ -56,7 +56,12 @@ function Dao() {
     this.obtenerPersonajeCriterio = function (criterio, callback) {
         obtener(this.personajes, criterio, callback);
     };
-
+    this.eliminarPersonaje = function (uid, callback) {
+        eliminar(this.personajes, { _id: ObjectID(uid) }, callback);
+    };
+    this.eliminarPersonajes = function (callback) {
+        eliminar(this.personajes, {}, callback);
+    };
 
     /* HELPERS */
     function insertar(coleccion, elemento, callback) {

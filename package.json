@@ -1,5 +1,5 @@
 {
-  "name": "bombergame",
+  "name": "el-bombas",
   "version": "1.0.0",
   "description": "Juego multijugador basado en bomberman",
   "main": "index.js",
