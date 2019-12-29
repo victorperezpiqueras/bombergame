@@ -442,6 +442,7 @@ function Juego() {
 							usr.personajeSeleccionado = pers;
 							juego.obtenerUsuario(user.nick, function (usu) {
 								usu.vidasTotales = pers.vidas;
+								usu.vidas = pers.vidas;
 								usu.velocidad = pers.velocidad;
 								usu.bombas = pers.bombas;
 								usu.personajeSeleccionado = pers;
