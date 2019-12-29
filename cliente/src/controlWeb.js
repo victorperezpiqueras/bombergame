@@ -32,7 +32,7 @@ function mostrarTutorial() {
 		$('#inicio').load('tutorial/tutorial.html');
 		quitarCargando();
 	});
-	
+
 }
 function mostrarRegistrarUsuario() {
 	clear();
@@ -137,13 +137,16 @@ function mostrarListaJugadores(jugadores) {
 	var cadena = "<div id='mLJ'>";
 	cadena = cadena + "<h3>Lista de jugadores</h3><hr>";
 	cadena = cadena + '<table class="table table-striped shadow p-4 mb-4 bg-white rounded animated bounceInUp"><thead class="thead-dark"><tr>';
-	cadena = cadena + '<th scope="col">Nick</th><th scope="col">Vidas</th><th>Preparado</th>';
+	cadena = cadena + '<th scope="col">Jugador</th><th scope="col">Personaje</th><th scope="col">Vidas</th><th scope="col">Velocidad</th><th scope="col">Bombas</th><th>Preparado</th>';
 	cadena = cadena + '</tr></thead>';
 	cadena = cadena + '<tbody>';
 	for (var key in jugadores) {
 		cadena = cadena + '<tr>'
 		cadena = cadena + '<td>' + jugadores[key].nick + '</td>';
-		cadena = cadena + '<td>3</td>';
+		cadena = cadena + '<td>&nbsp;&nbsp;&nbsp;<img class="border border-dark" width="30" height="30" src="assets/images/personajes/' + jugadores[key].personajeSeleccionado.nombre + '-icon.png"/></td>';
+		cadena = cadena + '<td>' + jugadores[key].vidas + '</td>';
+		cadena = cadena + '<td>' + jugadores[key].velocidad + '</td>';
+		cadena = cadena + '<td>' + jugadores[key].bombas + '</td>';
 		cadena = cadena + '<td>' + jugadores[key].estado + '</td>';
 		cadena = cadena + '</tr>';
 	};
@@ -207,7 +210,7 @@ function mostrarResultados(data) {
 	/* sorting de la tabla */
 	$(document).ready(function () {
 		$('#tabla-resultados').DataTable({
-			"order": [[ 0, "desc" ]],
+			"order": [[0, "desc"]],
 			"paging": false,
 			"searching": false,
 			"info": false
@@ -217,18 +220,20 @@ function mostrarResultados(data) {
 }
 
 function mostrarCanvas(num) {
+	var user = JSON.parse($.cookie("usr"));
 	inGame = true;
 	console.log(num);
 	$('#mLJ').remove();
 	//$('#inicio').append("<h1 id='contador-vidas'>Vidas: 3</h1>");
-	$('#inicio').append(/* "<h3 class='d-inline'>Vidas: </h3> */
-		"<img id='contador-vidas' class='contadorVidas' src='assets/images/3vida.png'/><br>");
+	$('#inicio').append("<div class='container'><div class='row'><img id='contador-vidas' class='contadorVidas' src='assets/images/vidas/"
+		+ user.personajeSeleccionado.vidas + "vida.png'/><br>&nbsp;&nbsp;<img id='contador-bombas' class='contadorVidas' src='assets/images/bombas/"+
+		+ user.personajeSeleccionado.bombas +"bomba.png'/></div></div><br>");
+
 	$('html,body').animate({ scrollTop: 9999 }, 'slow');
 
 	game = new Phaser.Game(240, 240, Phaser.CANVAS, "juego");
 	game.state.add("BootState", new Bomberman.BootState());
-	var skin = JSON.parse($.cookie("usr")).personajeSeleccionado;
-	game.state.add("LoadingState", new Bomberman.LoadingState(skin));
+	game.state.add("LoadingState", new Bomberman.LoadingState(user.personajeSeleccionado.imagen));
 	game.state.add("TiledState", new Bomberman.TiledState());
 
 	game.state.start("BootState", true, false, "assets/levels/level1_" + num + "player.json", "TiledState");
@@ -272,13 +277,18 @@ function quitarCargando() {
 function mostrarPartidasGanadas(stats) {
 	$('#cuenta-partidas-ganadas').text("Partidas ganadas: " + stats.partidasGanadas);
 	$('#cuenta-partidas-jugadas').text("Partidas jugadas: " + stats.partidasJugadas);
-	if (stats.ratio=="NaN%") stats.ratio = "0.00%";
+	if (stats.ratio == "NaN%") stats.ratio = "0.00%";
 	$('#cuenta-partidas-ratio').text("Ratio de victoria: " + stats.ratio);
 }
 
 function actualizarVidas(numVidas) {
 	$("#contador-vidas").effect("bounce", { times: 3 }, 300);
-	$('#contador-vidas').attr("src", "assets/images/" + numVidas + "vida.png");
+	$('#contador-vidas').attr("src", "assets/images/vidas/" + numVidas + "vida.png");
+}
+
+function actualizarBombas(numBombas) {
+	$("#contador-bombas").effect("bounce", { times: 3 }, 300);
+	$('#contador-bombas').attr("src", "assets/images/bombas/" + numBombas + "bomba.png");
 }
 
 function mostrarTienda() {
@@ -295,7 +305,7 @@ function mostrarTienda() {
 function cargarPersonajeSeleccionado() {
 	var user = JSON.parse($.cookie("usr"));
 	var imagen = document.getElementById("imagen-personaje-seleccionado");
-	imagen.src = "assets/images/personajes/" + user.personajeSeleccionado + ".png";
+	imagen.src = user.personajeSeleccionado.imagen;
 	//$("#imagen-personaje-seleccionado").effect("bounce", { times: 3 }, 300);
 }
 
@@ -310,16 +320,23 @@ function mostrarPersonajes(data) {
 		cadena = cadena + 'alt="Card image cap" style="padding: 10px;">';
 		cadena = cadena + '<div class="card-body">';
 		cadena = cadena + '<h4 class="card-title">' + pers.nombre + '</h4>';
+		cadena = cadena + '<h6 class="card-subtitle">' + pers.descripcion + '</h4>';
+		cadena = cadena + '<hr>';
 		cadena = cadena + '<div class="card-price">';
+		cadena = cadena + '<h5 >Vidas: <img width="33" height="33" src="assets/images/vidas/' + pers.vidas + 'vida.png"/></h4><br>';
+		cadena = cadena + '<h5 >Velocidad: ' + pers.velocidad + '<img width="25" height="25" src="assets/images/velocidad.png"/></h4><br>';
+		cadena = cadena + '<h5 >Bombas: ' + pers.bombas + '<img src="/assets/images/logo.png" width="30" height="33"></img>';
+		cadena = cadena + '<hr>';
 		cadena = cadena + '<div class="row justify-content-end">';
 		cadena = cadena + '<h4>' + pers.precio + '&nbsp;</h4>';
-		cadena = cadena + '<img src="/assets/images/logo.png" width="30" height="33"></img>&nbsp;&nbsp;';
+		cadena = cadena + '<img src="assets/images/moneda.png" width="30" height="33"></img>&nbsp;&nbsp;';
 		cadena = cadena + '<br>';
 
 		var owned = false;
 		var user = JSON.parse($.cookie("usr"))
+
 		for (var persOwned of user.personajes) {
-			if (persOwned == pers.nombre) owned = true;
+			if (persOwned.nombre == pers.nombre) owned = true;
 		}
 		if (owned) {
 			cadena = cadena + '<button onclick="rest.seleccionarPersonaje(\'' + pers.nombre + '\')"';

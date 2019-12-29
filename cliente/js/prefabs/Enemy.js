@@ -35,7 +35,10 @@ Bomberman.Enemy.prototype.constructor = Bomberman.Enemy;
 Bomberman.Enemy.prototype.update = function () {
     "use strict";
     var new_position;
-    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision, this.switch_direction, null, this);
+    //this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision, this.switch_direction, null, this);
+    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.walls, this.switch_direction, null, this);
+    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.blocks, this.switch_direction, null, this);
+    
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.bombs, this.switch_direction, null, this);
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.explosions, this.kill, null, this);
     

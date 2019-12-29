@@ -22,10 +22,10 @@ function Juego() {
 		}
 		callback(partida);
 	}
-	this.agregarUsuario = function (nombre, callback) {
+	this.agregarUsuario = function (nombre, personajeSeleccionado, callback) {
 		if (!this.usuarios[nombre]) {
 			console.log("Nuevo usuario: " + nombre);
-			this.usuarios[nombre] = new Usuario(nombre);
+			this.usuarios[nombre] = new Usuario(nombre, personajeSeleccionado);
 			callback(this.usuarios[nombre]);
 		}
 		else {
@@ -121,10 +121,23 @@ function Juego() {
 		}
 		callback(this.partidas[idp]);
 	}
+	this.alcanzarMeta = function (idp, nick, callback) {
+		if (this.partidas[idp]) {
+			this.partidas[idp].alcanzarMeta(nick);
+			//this.partidas[idp].jugadores;
+		}
+		callback(this.partidas[idp]);
+	}
 	this.jugadorHerido = function (idp, nick, callback) {
 		if (this.partidas[idp]) {
 			this.partidas[idp].jugadorHerido(nick);
 			//this.partidas[idp].jugadores;
+		}
+		callback(this.partidas[idp]);
+	}
+	this.jugadorCurado = function (idp, nick, callback) {
+		if (this.partidas[idp]) {
+			this.partidas[idp].jugadorCurado(nick);
 		}
 		callback(this.partidas[idp]);
 	}
@@ -162,8 +175,8 @@ function Juego() {
 			juego.dao.obtenerUsuariosCriterio({ $or: [{ nick: user.nick }, { email: user.email }] }, function (usuarios) {
 				if (!usuarios) {
 					user.password = cifrado.encrypt(user.password);
-					user.personajes = ["Default"];
-					user.personajeSeleccionado = "Default";
+					user.personajes = [new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 50, 1, "El personaje por defecto")];
+					user.personajeSeleccionado = new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 50, 1, "El personaje por defecto");
 					user.dinero = 0;
 					console.log("Modelo-usuario:", user);
 					juego.dao.insertarUsuario(user, function (user) {
@@ -187,7 +200,7 @@ function Juego() {
 				console.log("-------------------", usuario)
 				if (usuario) {
 					console.log("encontrado usuario login")
-					juego.agregarUsuario(usuario.nick, function () { });
+					juego.agregarUsuario(usuario.nick, usuario.personajeSeleccionado, function () { });
 					callback(usuario);//ARREGLAR
 					/* }
 					else callback({ "res": "no ok" }); */
@@ -314,27 +327,30 @@ function Juego() {
 				callback(pers);
 				db.close();
 			});
-			
+
 		});
 	};
 
 	this.generarPersonajes = function (callback) {
 		var juego = this;
 		this.dao.connect(function (db) {
-			console.log("no hay personajes")
-			personaje = new Personaje("Default", "assets/images/personajes/Default.png", 0);
-			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado default") });
-			personaje = new Personaje("Enemigo", "assets/images/personajes/Enemigo.png", 100);
-			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado enemigo") });
-			personaje = new Personaje("Orco", "assets/images/personajes/Orco.png", 300);
-			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado orco") });
-			personaje = new Personaje("Shrek", "assets/images/personajes/Shrek.png", 1000);
-			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado shrek") });
-			personaje = new Personaje("Mago", "assets/images/personajes/Mago.png", 500);
-			juego.dao.insertarPersonaje(personaje, function () { console.log("Insertado mago") });
+			juego.dao.eliminarPersonajes(function (result) {
+				console.log("no hay personajes");
+				var personajes = [];
+				personajes.push(new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 50, 1, "El personaje por defecto. No corre mucho ni tampoco aguanta, pero ahí está"));
+				juego.dao.insertarPersonaje(personajes[0], function () { console.log("Insertado default") });
+				personajes.push(new Personaje("Enemigo", "assets/images/personajes/Enemigo.png", 100, 3, 50, 1, "El enemigo básico, con los mismos stats que el personaje principal, pero más feo"));
+				juego.dao.insertarPersonaje(personajes[1], function () { console.log("Insertado enemigo") });
+				personajes.push(new Personaje("Orco", "assets/images/personajes/Orco.png", 300, 4, 40, 2, "El orco es algo más lento que los demás pero tiene 1 corazón extra de vida"));
+				juego.dao.insertarPersonaje(personajes[2], function () { console.log("Insertado orco") });
+				personajes.push(new Personaje("Shrek", "assets/images/personajes/Shrek.png", 10000, 10, 30, 5, "A Shrek se la suda todo, tiene 10 corazones y le da igual ser más lento que su abuela"));
+				juego.dao.insertarPersonaje(personajes[3], function () { console.log("Insertado shrek") });
+				personajes.push(new Personaje("Mago", "assets/images/personajes/Mago.png", 600, 2, 70, 3, "El mago es muy escurridizo aunque también bastante fragil si se le hiere"));
+				juego.dao.insertarPersonaje(personajes[4], function () { console.log("Insertado mago") });
+				callback(personajes)
+				db.close();
+			});
 
-			callback(personaje)
-			db.close();
 		});
 	};
 
@@ -379,7 +395,8 @@ function Juego() {
 							if (!comprado) {
 								if (usr.dinero >= pers.precio) {
 
-									usr.personajes.push(pers.nombre);
+									//usr.personajes.push(pers.nombre);
+									usr.personajes.push(pers);
 									usr.dinero -= pers.precio;
 									juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
 										console.log("Usuario modificado");
@@ -408,41 +425,60 @@ function Juego() {
 		var juego = this;
 		//personaje="Shrek";
 		this.dao.connect(function (db) {
-			console.log("obtener usuario")
-			juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(user._id) }, function (usr) {
-				if (usr) {
-					var comprado = false;
-					console.log(usr);
-					for (var perso of usr.personajes) {
-						if (perso == personaje) {
-							comprado = true;
+			juego.dao.obtenerPersonajeCriterio({ nombre: personaje }, function (pers) {
+				console.log("obtener usuario")
+				juego.dao.obtenerUsuariosCriterio({ _id: ObjectID(user._id) }, function (usr) {
+					if (usr) {
+						var comprado = false;
+						console.log(usr);
+						for (var perso of usr.personajes) {
+							console.log(perso.nombre == personaje)
+							if (perso.nombre == personaje) {
+								comprado = true;
+							}
+							console.log("pers", personaje)
 						}
+						if (comprado) {
+							usr.personajeSeleccionado = pers;
+							juego.obtenerUsuario(user.nick, function (usu) {
+								usu.vidasTotales = pers.vidas;
+								usu.velocidad = pers.velocidad;
+								usu.bombas = pers.bombas;
+								usu.personajeSeleccionado = pers;
+							});
+
+							juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
+								console.log("Usuario modificado");
+								callback(usr);//usr
+							});
+							db.close();
+						}
+						else callback({ "res": "personaje no comprado" });
+
 					}
-					if (comprado) {
-						usr.personajeSeleccionado = personaje;
-						juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
-							console.log("Usuario modificado");
-							callback(usr);//usr
-						});
+					else {
+						callback({ "res": "Error con la cuenta del usuario" });
 						db.close();
 					}
-					else callback({ "res": "personaje no comprado" });
-
-				}
-				else {
-					callback({ "res": "no user" });
-					db.close();
-				}
+				});
 			});
 		});
-	}
+	};
+	/* this.obtenerVidasPersonaje = function (personaje, callback) {
+		var juego = this;
+		this.dao.connect(function (db) {
+			juego.dao.obtenerPersonajeCriterio({ nombre: personaje }, function (pers) {
+				callback(pers.vidas);
+			});
+		});
+	} */
 
 	this.aumentarDinero = function (nick, puntos, callback) {
 		var juego = this;
 		this.dao.connect(function (db) {
 			juego.dao.obtenerUsuariosCriterio({ nick: nick }, function (usr) {
 				if (usr) {
-					usr.dinero = usr.dinero + puntos;
+					usr.dinero = usr.dinero + Math.round(puntos / 10);
 					juego.dao.modificarColeccionUsuarios(usr, function (usuario) {
 						console.log("Usuario aumentado dinero");
 						callback(usr);//usr
@@ -522,6 +558,9 @@ function Partida(nombre, idp) {
 	this.enviarResultado = function (nick) {
 		this.fase.enviarResultado(nick, this);
 	}
+	this.alcanzarMeta = function (nick) {
+		this.fase.alcanzarMeta(nick, this);
+	}
 	this.comprobarJugadores = function () {
 		//console.log(jugadores);
 		for (var key in this.jugadores) {
@@ -545,6 +584,9 @@ function Partida(nombre, idp) {
 	}
 	this.jugadorHerido = function (nick) {
 		this.fase.jugadorHerido(nick, this);
+	}
+	this.jugadorCurado = function (nick) {
+		this.fase.jugadorCurado(nick, this);
 	}
 	this.obtenerNickJugadores = function () {
 		var nickJugadores = [];
@@ -585,10 +627,16 @@ function Inicial() {
 	this.enviarResultado = function (nick, partida) {
 		console.log("La partida no se ha iniciado");
 	}
+	this.alcanzarMeta = function (nick, partida) {
+		console.log("La partida no se ha iniciado");
+	}
 	this.muereEnemigo = function (nick, partida) {
 		console.log("La partida no se ha iniciado");
 	}
 	this.jugadorHerido = function (nick, partida) {
+		console.log("La partida no se ha iniciado");
+	}
+	this.jugadorCurado = function (nick, partida) {
 		console.log("La partida no se ha iniciado");
 	}
 }
@@ -609,6 +657,13 @@ function Jugando() {
 			partida.contarTiempo();
 		}
 		//comprobar que alguien haya ganado
+	}
+	this.alcanzarMeta = function (nick, partida) {
+		partida.puntos += 1000;
+		partida.comprobarGanador();
+		partida.fase = new Final();
+		partida.tiempoFinal = new Date();
+		partida.contarTiempo();
 	}
 	this.muereEnemigo = function (nick, enemy, partida) {
 		partida.enemigos[enemy] = enemy;
@@ -633,6 +688,19 @@ function Jugando() {
 			}
 		}
 	}
+	this.jugadorCurado = function (nick, partida) {
+		if (partida.jugadores[nick].estado == "vivo") {
+			if (partida.jugadores[nick].vidas + 1 <= 3) partida.jugadores[nick].vidas = partida.jugadores[nick].vidas + 1;
+			console.log("Jugador gana 1 vida");
+			partida.comprobarJugadores();
+			if (partida.todosMuertos()) {
+				partida.fase = new Final();
+				partida.tiempoFinal = new Date();
+				partida.contarTiempo();
+			}
+		}
+	}
+
 }
 
 function Final() {
@@ -643,28 +711,41 @@ function Final() {
 	this.enviarResultado = function (nick, partida) {
 		console.log("La partida ha terminado");
 	}
+	this.alcanzarMeta = function (nick, partida) {
+		console.log("La partida ha terminado");
+	}
 	this.muereEnemigo = function (nick, partida) {
 		console.log("La partida ha terminado");
 	}
 	this.jugadorHerido = function (nick, partida) {
 		console.log("La partida ha terminado");
 	}
+	this.jugadorCurado = function (nick, partida) {
+		console.log("La partida ha terminado");
+	}
 }
 
-function Usuario(nick/* , id */) {
+function Usuario(nick, personaje/* , vidas, velocidad *//* , id */) {
 	this.nick = nick;
 	/* this.id = id; */
 	this.estado = "no preparado";
-	this.vidas = 3;
+	// Nuevos atributos:
+	this.vidasTotales = personaje.vidas;
+	this.vidas = personaje.vidas;
+	this.velocidad = personaje.velocidad;
+	this.bombas = personaje.bombas;
+
 	this.ini = function () {
 		this.estado = "no preparado";
-		this.vidas = 3;
+		this.vidas = this.vidasTotales;
+		//console.log(this)
 	}
 	this.actualizar = function (nick) {
 		this.nick = nick;
 	}
-	this.personajes = ["Default"];
-	this.personajeSeleccionado = "Default";
+	//this.personajes = ["Default"];
+	this.personajes = [new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 1, 50, 1)];
+	this.personajeSeleccionado = personaje;
 	this.dinero = 0;
 }
 
@@ -676,10 +757,14 @@ function Resultado(nickGanador, nombrePartida, nivel, jugadores, puntos) {
 	this.puntos = puntos;
 }
 
-function Personaje(nombre, imagen, precio) {
+function Personaje(nombre, imagen, precio, vidas, velocidad, bombas, descripcion) {
 	this.nombre = nombre;
 	this.imagen = imagen;
 	this.precio = precio;
+	this.vidas = vidas;
+	this.velocidad = velocidad;
+	this.descripcion = descripcion;
+	this.bombas = bombas;
 }
 
 module.exports.Juego = Juego;

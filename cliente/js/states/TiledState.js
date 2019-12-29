@@ -7,7 +7,17 @@ Bomberman.TiledState = function () {
     this.prefab_classes = {
         "player": Bomberman.Player.prototype.constructor,
         "remoto": Bomberman.Remoto.prototype.constructor,
-        "enemy": Bomberman.Enemy.prototype.constructor
+        "enemy": Bomberman.Enemy.prototype.constructor,
+
+        "target": Bomberman.Target.prototype.constructor,
+        "life_item": Bomberman.LifeItem.prototype.constructor,
+        "bomb_item": Bomberman.BombItem.prototype.constructor
+    };
+
+     // define available items
+     this.items = {
+        life_item: {probability: 0.1, properties: {texture: "life_item_image", group: "items"}},
+        bomb_item: {probability: 0.3, properties: {texture: "bomb_item_image", group: "items"}}
     };
 };
 
@@ -114,4 +124,10 @@ Bomberman.TiledState.prototype.game_over = function () {
     "use strict";
     localStorage.clear();
     this.game.state.restart(true, false, this.level_data);
+};
+
+Bomberman.TiledState.prototype.next_level = function () {
+    "use strict";
+    localStorage.number_of_bombs = this.prefabs.player.number_of_bombs;
+    this.game.state.start("BootState", true, false, this.level_data.next_level, "TiledState");
 };

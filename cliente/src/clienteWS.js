@@ -43,6 +43,15 @@ function ClienteWS(nick) {
 	this.jugadorHerido = function () {
 		this.socket.emit("jugadorHerido", this.idp, this.nick);
 	}
+	this.obtenerBomba = function (numBombas) {
+		this.socket.emit("obtenerBomba", this.idp, this.nick, numBombas);
+	}
+	this.jugadorCurado = function () {
+		this.socket.emit("jugadorCurado", this.idp, this.nick);
+	}
+	this.alcanzarMeta = function () {
+		this.socket.emit("alcanzarMeta", this.idp, this.nick);
+	}
 	this.mover = function (operacion, posicion) {
 		if (this.rival) this.socket.emit("mover", this.idp, this.nick, operacion, posicion);
 	}
@@ -108,6 +117,16 @@ function ClienteWS(nick) {
 			//cli.jugador.volverAInicio();
 			actualizarVidas(vidas);
 			cli.spriteLocal.volverAInicio();
+		});
+		this.socket.on("curado", function (vidas) {
+			console.log("curado");
+			console.log(vidas)
+			actualizarVidas(vidas);
+		});
+		this.socket.on("obtenidaBomba", function (bombas) {
+			console.log("obtenida bomba");
+			console.log(bombas)
+			actualizarBombas(bombas);
 		});
 		this.socket.on("mover", function (operacion, posicion) {
 			if (cli.spriteRival) {
