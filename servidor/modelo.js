@@ -337,15 +337,15 @@ function Juego() {
 			juego.dao.eliminarPersonajes(function (result) {
 				console.log("no hay personajes");
 				var personajes = [];
-				personajes.push(new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 50, 1, "El personaje por defecto. No corre mucho ni tampoco aguanta, pero ahí está"));
+				personajes.push(new Personaje("Default", "assets/images/personajes/Default.png", 0, 3, 50, 1, "El personaje por defecto. No corre mucho ni tampoco aguanta, pero ahí está."));
 				juego.dao.insertarPersonaje(personajes[0], function () { console.log("Insertado default") });
-				personajes.push(new Personaje("Enemigo", "assets/images/personajes/Enemigo.png", 100, 3, 50, 1, "El enemigo básico, con los mismos stats que el personaje principal, pero más feo"));
+				personajes.push(new Personaje("Enemigo", "assets/images/personajes/Enemigo.png", 100, 3, 50, 1, "El enemigo básico, con los mismos stats que el personaje principal, pero más feo."));
 				juego.dao.insertarPersonaje(personajes[1], function () { console.log("Insertado enemigo") });
-				personajes.push(new Personaje("Orco", "assets/images/personajes/Orco.png", 300, 4, 40, 2, "El orco es algo más lento que los demás pero tiene 1 corazón extra de vida"));
+				personajes.push(new Personaje("Orco", "assets/images/personajes/Orco.png", 300, 4, 40, 2, "El orco es algo más lento que los demás pero tiene 1 corazón extra de vida."));
 				juego.dao.insertarPersonaje(personajes[2], function () { console.log("Insertado orco") });
-				personajes.push(new Personaje("Shrek", "assets/images/personajes/Shrek.png", 10000, 10, 30, 5, "A Shrek se la suda todo, tiene 10 corazones y le da igual ser más lento que su abuela"));
+				personajes.push(new Personaje("Shrek", "assets/images/personajes/Shrek.png", 10000, 10, 30, 5, "A Shrek se la suda todo, tiene 10 corazones y le da igual ser más lento que su abuela."));
 				juego.dao.insertarPersonaje(personajes[3], function () { console.log("Insertado shrek") });
-				personajes.push(new Personaje("Mago", "assets/images/personajes/Mago.png", 600, 2, 70, 3, "El mago es muy escurridizo aunque también bastante fragil si se le hiere"));
+				personajes.push(new Personaje("Mago", "assets/images/personajes/Mago.png", 600, 2, 70, 3, "El mago es muy escurridizo aunque también bastante fragil si se le hiere. Lanza bolas de fuego."));
 				juego.dao.insertarPersonaje(personajes[4], function () { console.log("Insertado mago") });
 				callback(personajes)
 				db.close();

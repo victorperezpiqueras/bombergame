@@ -220,14 +220,15 @@ function mostrarResultados(data) {
 }
 
 function mostrarCanvas(num) {
+	borrarCanvas();
 	var user = JSON.parse($.cookie("usr"));
 	inGame = true;
 	console.log(num);
 	$('#mLJ').remove();
 	//$('#inicio').append("<h1 id='contador-vidas'>Vidas: 3</h1>");
-	$('#inicio').append("<div class='container'><div class='row'><img id='contador-vidas' class='contadorVidas' src='assets/images/vidas/"
-		+ user.personajeSeleccionado.vidas + "vida.png'/><br>&nbsp;&nbsp;<img id='contador-bombas' class='contadorVidas' src='assets/images/bombas/"+
-		+ user.personajeSeleccionado.bombas +"bomba.png'/></div></div><br>");
+	$('#inicio').append("<div id='mHUD' class='container'><div class='row'><img id='contador-vidas' class='contadorVidas' src='assets/images/vidas/"
+		+ user.personajeSeleccionado.vidas + "vida.png'/><br>&nbsp;&nbsp;<img id='contador-bombas' class='contadorVidas' src='assets/images/bombas/" +
+		+ user.personajeSeleccionado.bombas + "bomba.png'/></div></div><br>");
 
 	$('html,body').animate({ scrollTop: 9999 }, 'slow');
 
@@ -244,11 +245,21 @@ function mostrarCanvas(num) {
 function borrarCanvas() {
 	inGame = false;
 	$('canvas').remove();
-	$('#contador-vidas').remove();
+	$('#mHUD').remove();
+}
+
+function cerrarSesion(){
+	//checkInGame();
+	ws.salir();	
+	rest.cerrarSesion();
 }
 
 function checkInGame() {
-	if (inGame) ws.salir();
+	if (inGame) {
+		borrarCanvas();
+		ws.salir();	
+	}
+
 }
 function clear() {
 	$('#mAU').remove();
