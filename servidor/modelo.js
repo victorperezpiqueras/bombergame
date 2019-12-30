@@ -155,6 +155,23 @@ function Juego() {
 			db.close();
 		});
 	}
+	this.eliminarResultado = function (id, callback) {
+		var juego = this;
+		var json = { 'resultados': -1 };
+		this.dao.connect(function (db) {
+			juego.dao.eliminarResultado(id, function (result) {
+				if (result.result.n == 0) {
+					console.log("No se pudo eliminar de resultados");
+				}
+				else {
+					json = { "resultados": 1 };
+					console.log("Resultado eliminado de resultados");
+				}
+				callback(json);
+				db.close();
+			});
+		});
+	}
 	this.anotarResultado = function (partida, nick, callback) {
 		console.log("anotarResultado");
 		var juego = this;
@@ -346,9 +363,13 @@ function Juego() {
 				personajes.push(new Personaje("Shrek", "assets/images/personajes/Shrek.png", 10000, 10, 30, 5, "A Shrek se la suda todo, tiene 10 corazones y le da igual ser más lento que su abuela."));
 				juego.dao.insertarPersonaje(personajes[3], function () { console.log("Insertado shrek") });
 				personajes.push(new Personaje("Mago", "assets/images/personajes/Mago.png", 600, 2, 70, 3, "El mago es muy escurridizo aunque también bastante fragil si se le hiere. Lanza bolas de fuego."));
-				juego.dao.insertarPersonaje(personajes[4], function () { console.log("Insertado mago") });
-				callback(personajes)
-				db.close();
+				juego.dao.insertarPersonaje(personajes[4], function () {
+					console.log("Insertado mago")
+					console.log("Insertados todos");
+					callback(personajes)
+					db.close();
+				});
+
 			});
 
 		});
@@ -388,7 +409,7 @@ function Juego() {
 							var comprado = false;
 							console.log(usr);
 							for (var perso of usr.personajes) {
-								if (perso == personaje) {
+								if (perso.nombre == personaje) {
 									comprado = true;
 								}
 							}
@@ -406,10 +427,9 @@ function Juego() {
 								else {
 									callback({ "res": "no dinero" });
 								}
-								db.close();
 							}
 							else callback({ "res": "personaje ya comprado" });
-
+							db.close();
 						}
 						else {
 							callback({ "res": "no user" });
@@ -769,3 +789,6 @@ function Personaje(nombre, imagen, precio, vidas, velocidad, bombas, descripcion
 }
 
 module.exports.Juego = Juego;
+module.exports.Partida = Partida;
+module.exports.Resultado = Resultado;
+module.exports.Personaje = Personaje;
