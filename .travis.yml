@@ -7,7 +7,7 @@ addons:
   chrome: stable
 branches:
   only:
-    - sprint6
+    - master
 cache:
   directories:
     - node_modules
