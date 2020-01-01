@@ -790,5 +790,10 @@ function Personaje(nombre, imagen, precio, vidas, velocidad, bombas, descripcion
 
 module.exports.Juego = Juego;
 module.exports.Partida = Partida;
+
+module.exports.Inicial = Inicial;
+module.exports.Jugando = Jugando;
+module.exports.Final = Final;
+
 module.exports.Resultado = Resultado;
 module.exports.Personaje = Personaje;
