@@ -28,7 +28,7 @@ Bomberman.LoadingState.prototype.preload = function () {
                     this.load.image(asset_key, asset.source);
                     break;
                 case "spritesheet":
-                    if (asset.source == "assets/images/player_spritesheet.png") { asset.source = "assets/images/personajes/" + this.skin + ".png" };
+                    if (asset.source == "assets/images/player_spritesheet.png") { asset.source = this.skin };
                     this.load.spritesheet(asset_key, asset.source/*  */, asset.frame_width, asset.frame_height, asset.frames, asset.margin, asset.spacing);
                     break;
                 case "tilemap":

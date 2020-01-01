@@ -12,8 +12,7 @@
     </div>
     <hr>
     <div class="row animated bounceInLeft">
-        <h3 id="bombs-user">Bombs: 14</h3>
-        <img src="/assets/images/logo.png" width="30" height="33"></img>
+        <h3 id="bombs-user">Monedas: 14</h3>&nbsp;<img src="assets/images/moneda.png" width="30" height="33">
     </div>
     <br>
     <div id="lista-personajes" class="row animated bounceInRight">
@@ -26,5 +25,5 @@
     rest.obtenerPersonajes();
     var user = JSON.parse($.cookie("usr"));
     console.log(user)
-    $("#bombs-user").text("Bombs: " + user.dinero);
+    $("#bombs-user").text("Monedas: " + user.dinero);
 </script>

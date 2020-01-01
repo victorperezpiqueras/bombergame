@@ -219,7 +219,9 @@ function ClienteRest() {
 			url: '/obtenerPersonajes/',
 			data: '{}',
 			success: function (data) {
-				console.log("Personajes ", data)
+				//ordenar por precio:
+				data.sort((a, b) => a.precio>b.precio);
+				console.log("Personajes ", data);
 				mostrarPersonajes(data);
 				quitarCargando();
 			},
@@ -259,10 +261,16 @@ function ClienteRest() {
 			url: '/seleccionarPersonaje/',
 			data: JSON.stringify({ user: usr, personaje: personaje }),
 			success: function (data) {
-				$.cookie("usr", JSON.stringify(data));
-				console.log("Seleccionar personaje ", data)
-				cargarPersonajeSeleccionado();
+				if (data.res == "personaje no comprado" || data.res == "Error con la cuenta del usuario") {
+					mostrarAviso(data.res);
+				}
+				else {
+					$.cookie("usr", JSON.stringify(data));
+					console.log("Seleccionar personaje ", data)
+					cargarPersonajeSeleccionado();
+				}
 				quitarCargando();
+				$('html,body').animate({ scrollTop: 0 }, 'slow');
 			},
 			contentType: 'application/json',
 			dataType: 'json'

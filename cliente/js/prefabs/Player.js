@@ -10,9 +10,11 @@ Bomberman.Player = function (game_state, name, position, properties) {
     ws.spriteLocal = this;
     //ws.jugador = this;
 
-    this.walking_speed = +properties.walking_speed;
+    //this.walking_speed = +properties.walking_speed;
+    this.walking_speed = JSON.parse($.cookie("usr")).personajeSeleccionado.velocidad;
     this.bomb_duration = +properties.bomb_duration;
-    this.vidas = +properties.vidas;
+    //this.vidas = +properties.vidas;
+    this.vidas = JSON.parse($.cookie("usr")).personajeSeleccionado.vidas;
     this.dropping_bomb = false;
 
     this.animations.add("walking_down", [1, 2, 3], 10, true);
@@ -32,6 +34,20 @@ Bomberman.Player = function (game_state, name, position, properties) {
     //this.ant=this.initial_position;
 
     this.cursors = this.game_state.game.input.keyboard.createCursorKeys();
+
+    //this.number_of_bombs = localStorage.number_of_bombs || +properties.number_of_bombs;
+    this.number_of_bombs = JSON.parse($.cookie("usr")).personajeSeleccionado.bombas;
+    this.current_bomb_index = 0;
+
+    this.tipoBomba = null;
+    switch (JSON.parse($.cookie("usr")).personajeSeleccionado.nombre) {
+        case ("Mago"):
+            this.tipoBomba = "Mago"; break;
+        default:
+            this.tipoBomba = "Bomba"; break;
+    }
+    console.log(this.tipoBomba);
+    this.orientacion = 4;
 };
 
 Bomberman.Player.prototype = Object.create(Bomberman.Prefab.prototype);
@@ -39,7 +55,11 @@ Bomberman.Player.prototype.constructor = Bomberman.Player;
 
 Bomberman.Player.prototype.update = function () {
     "use strict";
-    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
+    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.walls);
+    this.game_state.game.physics.arcade.collide(this, this.game_state.layers.blocks);
+
+    //this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
+
     this.game_state.game.physics.arcade.collide(this, this.game_state.groups.bombs);
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.explosions, this.kill, null, this);
     this.game_state.game.physics.arcade.overlap(this, this.game_state.groups.remotos, this.killPlayer, null, this);//
@@ -54,6 +74,7 @@ Bomberman.Player.prototype.update = function () {
             this.scale.setTo(-1, 1);
             this.animations.play("walking_left");
         }
+        this.orientacion = 1;
     } else if (this.cursors.right.isDown && this.body.velocity.x >= 0) {
         // move right
         ws.mover("right", { x: this.x, y: this.y });
@@ -63,6 +84,7 @@ Bomberman.Player.prototype.update = function () {
             this.scale.setTo(1, 1);
             this.animations.play("walking_right");
         }
+        this.orientacion = 2;
     } else {
         ws.mover("velX", { x: this.x, y: this.y });
         this.body.velocity.x = 0;
@@ -75,6 +97,7 @@ Bomberman.Player.prototype.update = function () {
         if (this.body.velocity.x === 0) {
             this.animations.play("walking_up");
         }
+        this.orientacion = 3;
     } else if (this.cursors.down.isDown && this.body.velocity.y >= 0) {
         // move down
         ws.mover("down", { x: this.x, y: this.y });
@@ -82,6 +105,7 @@ Bomberman.Player.prototype.update = function () {
         if (this.body.velocity.x === 0) {
             this.animations.play("walking_down");
         }
+        this.orientacion = 4;
     } else {
         ws.mover("velY", { x: this.x, y: this.y });
         this.body.velocity.y = 0;
@@ -92,21 +116,32 @@ Bomberman.Player.prototype.update = function () {
         ws.mover("stopAnimation", { x: this.x, y: this.y });
         this.animations.stop();
         this.frame = this.stopped_frames[this.body.facing];
+        //console.log(this.orientacion)
     }
 
-    if (!this.dropping_bomb && this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+    /*   if (!this.dropping_bomb && this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+  
+          var audio = new Audio('assets/audio/bomb-before-sound.mp3');
+          audio.play();
+  
+          ws.mover("dropTrue", { x: this.x, y: this.y });
+          this.drop_bomb();
+          this.dropping_bomb = true;
+      }
+  
+      if (this.dropping_bomb && !this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
+          ws.mover("dropFalse", { x: this.x, y: this.y });
+          this.dropping_bomb = false;
+      } */
 
-        var audio = new Audio('assets/audio/bomb-before-sound.mp3');
-        audio.play();
-
-        ws.mover("dropTrue", { x: this.x, y: this.y });
-        this.drop_bomb();
-        this.dropping_bomb = true;
-    }
-
-    if (this.dropping_bomb && !this.game_state.input.keyboard.isDown(Phaser.Keyboard.B)) {
-        ws.mover("dropFalse", { x: this.x, y: this.y });
-        this.dropping_bomb = false;
+    var colliding_bombs;
+    // if the spacebar is pressed and it is possible to drop another bomb, try dropping it
+    if (this.game_state.input.keyboard.isDown(Phaser.Keyboard.B) && this.current_bomb_index < this.number_of_bombs) {
+        colliding_bombs = this.game_state.game.physics.arcade.getObjectsAtLocation(this.x, this.y, this.game_state.groups.bombs);
+        // drop the bomb only if it does not collide with another one
+        if (colliding_bombs.length === 0) {
+            this.drop_bomb();
+        }
     }
 };
 
@@ -121,8 +156,8 @@ Bomberman.Player.prototype.update = function () {
 // }
 
 Bomberman.Player.prototype.kill = function () {
-    var audio = new Audio('assets/audio/death-sound.mp3');
-    audio.play();
+    /* var audio = new Audio('assets/audio/death-sound.mp3');
+    audio.play(); */
     if (this.estado == "vivo") {
         this.estado = "herido";
         this.x = this.initial_position.x;
@@ -148,9 +183,34 @@ Bomberman.Player.prototype.volverAInicio = function () {
 Bomberman.Player.prototype.drop_bomb = function () {
     "use strict";
     var bomb, bomb_name, bomb_position, bomb_properties;
+    var orientacion = this.obtenerOrientacion();
+    console.log("personaje",orientacion)
     // get the first dead bomb from the pool
     bomb_name = this.name + "_bomb_" + this.game_state.groups.bombs.countLiving();
     bomb_position = new Phaser.Point(this.x, this.y);
-    bomb_properties = { "texture": "bomb_spritesheet", "group": "bombs", bomb_radius: 3 };
-    bomb = Bomberman.create_prefab_from_pool(this.game_state.groups.bombs, Bomberman.Bomb.prototype.constructor, this.game_state, bomb_name, bomb_position, bomb_properties);
+    bomb_properties = { "texture": "bomb_spritesheet", "group": "bombs", bomb_radius: 3, tipoBomba: this.tipoBomba, player: this };
+    bomb = Bomberman.create_prefab_from_pool(this.game_state.groups.bombs, Bomberman.Bomb.prototype.constructor, 
+        this.game_state, bomb_name, bomb_position, bomb_properties);
+
+    this.current_bomb_index += 1;/////////
 };
+
+Bomberman.Player.prototype.obtenerOrientacion = function () {
+    if (this.cursors.left.isDown && this.body.velocity.x <= 0) {
+        // move left
+        return 1;
+    } else if (this.cursors.right.isDown && this.body.velocity.x >= 0) {
+        // move right
+        return 2;
+    } 
+    if (this.cursors.up.isDown && this.body.velocity.y <= 0) {
+        // move up
+        return 3;
+    } else if (this.cursors.down.isDown && this.body.velocity.y >= 0) {
+        // move down
+        return 4;
+    }
+    else{
+        return this.body.facing;
+    }
+}

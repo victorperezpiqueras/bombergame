@@ -57,6 +57,19 @@ function ServidorWS() {
                     }
                 });
             });
+            socket.on("alcanzarMeta", function (idp, nick) {
+                juego.alcanzarMeta(idp, nick, function (partida) { //function(resultados) 
+                    if (partida && partida.fase.nombre == "final") {
+                        cli.enviarATodos(io, idp, "finPartida", {}); //resultados
+                        juego.anotarResultado(partida, nick, function (usuario) {
+                            cli.enviarRemitente(socket, "aumentoDinero", usuario);
+                        });
+                    }
+                    else {
+                        cli.enviarRemitente(socket, "anotado"); // ,resultados);
+                    }
+                });
+            });
             socket.on("muereEnemigo", function (idp, nick, enemy) {
                 juego.muereEnemigo(idp, nick, enemy, function (partida) {
                     if (partida && partida.fase.nombre == "final") {
@@ -83,6 +96,23 @@ function ServidorWS() {
                         cli.enviarRemitente(socket, "sigueVivo", partida.jugadores[nick].vidas); // ,resultados);
                     }
                 })
+            });
+            socket.on("jugadorCurado", function (idp, nick) {
+                juego.jugadorCurado(idp, nick, function (partida) {
+                    if (partida && partida.fase.nombre == "final") {
+                        cli.enviarATodos(io, idp, "finPartida", {}); //resultados
+                        juego.anotarResultado(partida, nick, function (usuario) {
+                            cli.enviarRemitente(socket, "aumentoDinero", usuario);
+                        });
+                    }
+                    else {
+                        console.log(partida.jugadores[nick].vidas)
+                        cli.enviarRemitente(socket, "curado", partida.jugadores[nick].vidas); // ,resultados);
+                    }
+                })
+            });
+            socket.on('obtenerBomba', function (idp, nick, numBombas) {
+                cli.enviarRemitente(socket, "obtenidaBomba", numBombas); 
             });
             socket.on("mover", function (idp, nick, operacion, posicion) {
                 cli.enviarATodosMenosRemitente(socket, idp, "mover", operacion, posicion);

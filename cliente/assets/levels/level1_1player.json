@@ -5,12 +5,19 @@
         "bomb_spritesheet": {"type": "spritesheet", "source": "assets/images/bomb_spritesheet.png", "frame_width": 16, "frame_height": 16},
         "enemy_spritesheet": {"type": "spritesheet", "source": "assets/images/enemy_spritesheet.png", "frame_width": 16, "frame_height": 16},
         "explosion_image": {"type": "image", "source": "assets/images/explosion.png"},
+        "target_image": {"type": "image", "source": "assets/images/target.png"},
+        "goal_image": {"type": "image", "source": "assets/images/portal.png"},
+        "life_item_image": {"type": "image", "source": "assets/images/life_item.png"},
+        "bomb_item_image": {"type": "image", "source": "assets/images/bomb_item.png"},
         
-        "level_tilemap": {"type": "tilemap", "source": "assets/maps/level1_1player_map.json"}
+        "level_tilemap": {"type": "tilemap", "source": "assets/maps/level1_map-1.json"}
     },
     "groups": [
+        "targets",
+        "items",
         "explosions",
         "bombs",
+        "goals",
         "enemies",
         "players"
     ],
@@ -18,4 +25,5 @@
         "key": "level_tilemap",
         "tilesets": ["map_tiles"]
     }
+
 }
