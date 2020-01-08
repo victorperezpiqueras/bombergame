@@ -122,7 +122,7 @@ function mostrarCrearPartida(nick) {
 function mostrarPartida(data) {
 	clear();
 	var cadena = "<div id='mP'>";
-	cadena = cadena + "<h3>Bienvenido a la partida: " + data.nombre + "</h3><hr>";
+	cadena = cadena + "<h3>Bienvenid@ a la partida: " + data.nombre + "</h3><hr>";
 	cadena = cadena + '<div class="col-12 col-sm-6 col-md-6 inline" id="in-partida-div">';
 	cadena = cadena + '<button type="button" id="preparadoBtn" class="btn btn-md inline login50-form-btn1" onclick="ws.preparado()"">PREPARADO</button>&nbsp;';
 	cadena = cadena + ' <button type="button" id="salirBtn" class="btn btn-md inline login50-form-btn1" onclick="ws.salir()"">SALIR</button><br><br></div></div><hr>';
