@@ -106,24 +106,30 @@ function ClienteRest() {
 	}
 	this.loginUsuario = function (nick, password) {
 		mostrarCargando();
-		$.ajax({
-			type: 'POST',
-			url: '/loginUsuario',
-			data: JSON.stringify({ nick: nick, password: password }),
-			success: function (data) {
-				quitarCargando();
-				if (data.res == "no ok") {
-					mostrarAviso("Usuario o contraseña no coinciden");
-					console.log('No se ha podido loguear');
-				}
-				else {
-					$.cookie("usr", JSON.stringify(data));
-					mostrarUsuario(data);
-				}
-			},
-			contentType: 'application/json',
-			dataType: 'json'
-		});
+		if (!nick || !password) {
+			quitarCargando();
+			mostrarAviso("Rellena todos los campos");
+		}
+		else {
+			$.ajax({
+				type: 'POST',
+				url: '/loginUsuario',
+				data: JSON.stringify({ nick: nick, password: password }),
+				success: function (data) {
+					quitarCargando();
+					if (data.res == "no ok") {
+						mostrarAviso("Usuario o contraseña no coinciden");
+						console.log('No se ha podido loguear');
+					}
+					else {
+						$.cookie("usr", JSON.stringify(data));
+						mostrarUsuario(data);
+					}
+				},
+				contentType: 'application/json',
+				dataType: 'json'
+			});
+		}
 	};
 	this.actualizarUsuario = function (oldpass, newpass) {
 		if (oldpass.indexOf('<') > -1 || newpass.indexOf('<') > -1) {
@@ -220,7 +226,7 @@ function ClienteRest() {
 			data: '{}',
 			success: function (data) {
 				//ordenar por precio:
-				data.sort((a, b) => a.precio>b.precio);
+				data.sort((a, b) => a.precio > b.precio);
 				console.log("Personajes ", data);
 				mostrarPersonajes(data);
 				quitarCargando();
