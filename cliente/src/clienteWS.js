@@ -140,6 +140,9 @@ function ClienteWS(nick) {
 			else {
 				$.cookie("usr", JSON.stringify(usuario));
 			}
-		})
+		});
+		this.socket.on('login', function () {
+			mostrarLoginUsuario();
+		});
 	}
 }

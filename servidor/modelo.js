@@ -10,17 +10,22 @@ function Juego() {
 	this.crearPartida = function (nombre, nick, callback) {
 		var idp = nombre + nick;
 		var partida;
-		if (!this.partidas[idp]) {
+		if(!this.usuarios[nick]){
+			callback({"error":"no usuario"});	
+		}
+		else if (!this.partidas[idp]) {
 			console.log("Nueva partida");
 			partida = new Partida(nombre, idp);
 			partida.agregarJugador(this.usuarios[nick]);
 			//partida.jugadores[nick]=this.usuarios[nick];
 			this.partidas[idp] = partida;
+			callback(partida);
 		}
 		else {
 			partida = this.partidas[idp];
+			callback(partida);
 		}
-		callback(partida);
+		
 	}
 	this.agregarUsuario = function (nombre, personajeSeleccionado, callback) {
 		if (!this.usuarios[nombre]) {

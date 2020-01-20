@@ -14,6 +14,9 @@ function ServidorWS() {
             console.log("Nueva conexión");
             socket.on('crearPartida', function (nick, nombrePartida) {
                 juego.crearPartida(nombrePartida, nick, function (partida) {
+                    if(partida.error=="no usuario"){
+                        cli.enviarRemitente(socket, "login");
+                    }
                     cli.enviarRemitente(socket, "partidaCreada", partida);
                     socket.join(partida.idp);
                 });
